@@ -30,10 +30,7 @@ import com.comze_instancelabs.minigamesapi.config.StatsGlobalConfig;
 import com.comze_instancelabs.minigamesapi.guns.Guns;
 import com.comze_instancelabs.minigamesapi.util.ArenaScoreboard;
 import com.comze_instancelabs.minigamesapi.util.BungeeUtil;
-import com.comze_instancelabs.minigamesapi.util.Metrics;
-import com.comze_instancelabs.minigamesapi.util.Metrics.Graph;
 import com.comze_instancelabs.minigamesapi.util.ParticleEffectNew;
-import com.comze_instancelabs.minigamesapi.util.Updater;
 import com.comze_instancelabs.minigamesapi.util.Util;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
@@ -56,8 +53,6 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 
 	public String version = "";
 	public boolean below1710 = false; // Used for scoreboard function (wether to use getScore(OfflinePlayer) or getScore(String))
-
-	Metrics metrics;
 
 	public void onEnable() {
 		instance = this;
@@ -87,36 +82,8 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 		partymessages = new PartyMessagesConfig(this);
 		statsglobal = new StatsGlobalConfig(this, false);
 
-		this.debug = getConfig().getBoolean("config.debug");
+		debug = getConfig().getBoolean("config.debug");
 
-		Bukkit.getScheduler().runTaskLater(this, new Runnable() {
-			public void run() {
-				try {
-					metrics = new Metrics(instance);
-
-					Graph components = metrics.createGraph("Minigames");
-					for (PluginInstance pli : pinstances.values()) {
-						components.addPlotter(new Metrics.Plotter(pli.getPlugin().getName()) {
-							@Override
-							public int getValue() {
-								return 1;
-							}
-						});
-						if (MinigamesAPI.debug) {
-							System.out.println("Loaded Graph for: " + pli.getPlugin().getName());
-						}
-					}
-
-					metrics.start();
-				} catch (IOException e) {
-					System.out.println("# " + e.getMessage());
-				}
-			}
-		}, 60L);
-
-		if (getConfig().getBoolean("config.auto_updating")) {
-			Updater updater = new Updater(this, 83025, this.getFile(), Updater.UpdateType.DEFAULT, false);
-		}
 
 		if (getServer().getPluginManager().getPlugin("CrackShot") != null) {
 			crackshot = true;

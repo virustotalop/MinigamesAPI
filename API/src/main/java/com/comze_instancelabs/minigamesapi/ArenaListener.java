@@ -65,8 +65,8 @@ import com.comze_instancelabs.minigamesapi.util.Validator;
 
 public class ArenaListener implements Listener {
 
-	JavaPlugin plugin = null;
-	PluginInstance pli = null;
+	private JavaPlugin plugin;
+	private PluginInstance pli;
 	private String minigame = "minigame";
 
 	private ArrayList<String> cmds = new ArrayList<String>();

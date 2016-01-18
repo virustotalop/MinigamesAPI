@@ -1,4 +1,1 @@
 # MinigamesAPI Config #
-# If you want bugfree versions, turn this to true:
-config:
-  auto_updating: true
