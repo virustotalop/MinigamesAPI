@@ -460,7 +460,7 @@ public class CommandHandler {
 	}
 
 	public boolean leaveArena(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
-		if (pli.global_players.containsKey(p.getName())) {
+		if (pli.globalPlayers.containsKey(p.getName())) {
 			String playername = p.getName();
 			if (args.length > 1) {
 				if (sender.hasPermission(uber_permission + ".kickplayer")) {
@@ -469,7 +469,7 @@ public class CommandHandler {
 					}
 				}
 			}
-			Arena a = pli.global_players.get(playername);
+			Arena a = pli.globalPlayers.get(playername);
 			if (a.getArcadeInstance() != null) {
 				a.getArcadeInstance().leaveArcade(playername, true);
 			}
@@ -514,7 +514,7 @@ public class CommandHandler {
 			}
 		} else {
 			if (pli.containsGlobalPlayer(p.getName())) {
-				Arena a = pli.global_players.get(p.getName());
+				Arena a = pli.globalPlayers.get(p.getName());
 				a.stop();
 				sender.sendMessage(pli.getMessagesConfig().arena_action.replaceAll("<arena>", args[1]).replaceAll("<action>", "stopped"));
 				return true;
@@ -730,8 +730,8 @@ public class CommandHandler {
 						ap.setInventories(p.getInventory().getContents(), p.getInventory().getArmorContents());
 						ap.setOriginalGamemode(p.getGameMode());
 						ap.setOriginalXplvl(p.getLevel());
-						pli.global_players.put(playername, temp);
-						pli.global_lost.put(playername, temp);
+						pli.globalPlayers.put(playername, temp);
+						pli.globalLost.put(playername, temp);
 						temp.spectateGame(playername);
 					} else {
 						sender.sendMessage(pli.getMessagesConfig().you_already_are_in_arena.replaceAll("<arena>", temp.getInternalName()));
@@ -755,8 +755,8 @@ public class CommandHandler {
 					return true;
 			}
 			if (!plugin.getConfig().getBoolean("config.allow_classes_selection_out_of_arenas")) {
-				if (pli.global_players.containsKey(p.getName())) {
-					Arena a = pli.global_players.get(p.getName());
+				if (pli.globalPlayers.containsKey(p.getName())) {
+					Arena a = pli.globalPlayers.get(p.getName());
 					if (a.getArenaState() == ArenaState.INGAME) {
 						return true;
 					}
@@ -799,7 +799,7 @@ public class CommandHandler {
 			if (!plugin.getConfig().getBoolean("config.classes_enabled")) {
 				return true;
 			}
-			if (pli.global_players.containsKey(p.getName())) {
+			if (pli.globalPlayers.containsKey(p.getName())) {
 				pli.getClassesHandler().openGUI(p.getName());
 			} else {
 				sender.sendMessage(pli.getMessagesConfig().not_in_arena);
@@ -813,7 +813,7 @@ public class CommandHandler {
 			if (!plugin.getConfig().getBoolean("config.shop_enabled")) {
 				return true;
 			}
-			if (pli.global_players.containsKey(p.getName())) {
+			if (pli.globalPlayers.containsKey(p.getName())) {
 				String shop_item = args[1];
 				if (!pli.getShopHandler().buyByInternalName(p, shop_item)) {
 					String all = "";
@@ -833,7 +833,7 @@ public class CommandHandler {
 			if (!plugin.getConfig().getBoolean("config.shop_enabled")) {
 				return true;
 			}
-			if (pli.global_players.containsKey(p.getName())) {
+			if (pli.globalPlayers.containsKey(p.getName())) {
 				pli.getShopHandler().openGUI(p.getName());
 			} else {
 				sender.sendMessage(pli.getMessagesConfig().not_in_arena);

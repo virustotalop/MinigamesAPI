@@ -27,8 +27,8 @@ import com.comze_instancelabs.minigamesapi.util.Validator;
 
 public class PluginInstance {
 
-	public HashMap<String, Arena> global_players = new HashMap<String, Arena>();
-	public HashMap<String, Arena> global_lost = new HashMap<String, Arena>();
+	public HashMap<String, Arena> globalPlayers = new HashMap<String, Arena>();
+	public HashMap<String, Arena> globalLost = new HashMap<String, Arena>();
 	public HashMap<String, Arena> global_arcade_spectator = new HashMap<String, Arena>();
 
 	private ArenaListener arenalistener = null;
@@ -65,8 +65,8 @@ public class PluginInstance {
 	boolean spectator_move_y_lock = true;
 	boolean use_xp_bar_level = true;
 	boolean blood_effects = true;
-	boolean dead_in_fake_bed_effects = true;
-	boolean spectator_mode_1_8 = true;
+	boolean deadInFakeBedEffects = true;
+	boolean spectatorMode1_8 = true;
 	boolean damage_identifier_effects = true;
 	public boolean color_background_wool_of_signs;
 	boolean last_man_standing = true;
@@ -111,9 +111,9 @@ public class PluginInstance {
 		use_xp_bar_level = plugin.getConfig().getBoolean("config.use_xp_bar_level");
 		blood_effects = plugin.getConfig().getBoolean("config.effects.blood");
 		damage_identifier_effects = plugin.getConfig().getBoolean("config.effects.damage_identifier_holograms");
-		dead_in_fake_bed_effects = plugin.getConfig().getBoolean("config.effects.dead_in_fake_bed");
+		deadInFakeBedEffects = plugin.getConfig().getBoolean("config.effects.dead_in_fake_bed");
 		color_background_wool_of_signs = plugin.getConfig().getBoolean("config.color_background_wool_of_signs");
-		spectator_mode_1_8 = plugin.getConfig().getBoolean("config.effects.1_8_spectator_mode");
+		spectatorMode1_8 = plugin.getConfig().getBoolean("config.effects.1_8_spectator_mode");
 		last_man_standing = plugin.getConfig().getBoolean("config.last_man_standing_wins");
 		old_reset = plugin.getConfig().getBoolean("config.use_old_reset_method");
 		show_classes_without_usage_permission = plugin.getConfig().getBoolean("config.show_classes_without_usage_permission");
@@ -188,6 +188,14 @@ public class PluginInstance {
 
 	public HologramsConfig getHologramsConfig() {
 		return hologramsconfig;
+	}
+
+	public HashMap<String, Arena> getGlobalPlayers() {
+		return globalPlayers;
+	}
+
+	public void setGlobalPlayers(HashMap<String, Arena> globalPlayers) {
+		this.globalPlayers = globalPlayers;
 	}
 
 	public Rewards getRewardsInstance() {
@@ -329,19 +337,27 @@ public class PluginInstance {
 	}
 
 	public boolean containsGlobalPlayer(String playername) {
-		return this.global_players.containsKey(playername);
+		return this.globalPlayers.containsKey(playername);
 	}
 
 	public boolean containsGlobalLost(String playername) {
-		return this.global_lost.containsKey(playername);
+		return this.globalLost.containsKey(playername);
 	}
 
 	public Arena getArenaByGlobalPlayer(String playername) {
 		if (containsGlobalPlayer(playername)) {
-			return this.global_players.get(playername);
+			return this.globalPlayers.get(playername);
 		} else {
 			return null;
 		}
+	}
+
+	public HashMap<String, Arena> getGlobalLost() {
+		return globalLost;
+	}
+
+	public void setGlobalLost(HashMap<String, Arena> globalLost) {
+		this.globalLost = globalLost;
 	}
 
 }

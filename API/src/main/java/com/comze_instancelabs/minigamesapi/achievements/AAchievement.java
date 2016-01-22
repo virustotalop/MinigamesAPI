@@ -2,13 +2,13 @@ package com.comze_instancelabs.minigamesapi.achievements;
 
 public class AAchievement {
 
-	String name;
-	boolean done;
-	String playername;
+	private String name;
+	private boolean done;
+	private String playerName;
 
-	public AAchievement(String name, String playername, boolean done) {
+	public AAchievement(String name, String playerName, boolean done) {
 		this.name = name;
-		this.playername = playername;
+		this.playerName = playerName;
 		this.done = done;
 	}
 
@@ -22,5 +22,9 @@ public class AAchievement {
 
 	public String getAchievementNameRaw() {
 		return name;
+	}
+	
+	public String getPlayerName() {
+		return this.playerName;
 	}
 }

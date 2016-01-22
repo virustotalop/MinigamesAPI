@@ -42,8 +42,8 @@ public class Shop {
 				@Override
 				public void onOptionClick(IconMenu.OptionClickEvent event) {
 					if (event.getPlayer().getName().equalsIgnoreCase(p)) {
-						if (pli.global_players.containsKey(p)) {
-							if (pli.getArenas().contains(pli.global_players.get(p))) {
+						if (pli.globalPlayers.containsKey(p)) {
+							if (pli.getArenas().contains(pli.globalPlayers.get(p))) {
 								String d = event.getName();
 								Player p = event.getPlayer();
 								buy(p, d);

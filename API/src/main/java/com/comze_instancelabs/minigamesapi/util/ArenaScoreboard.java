@@ -128,7 +128,7 @@ public class ArenaScoreboard {
 								continue;
 							}
 							Player p_ = Bukkit.getPlayer(playername_);
-							if (!pli.global_lost.containsKey(playername_)) {
+							if (!pli.globalLost.containsKey(playername_)) {
 								int score = 0;
 								if (currentscore.containsKey(playername_)) {
 									int oldscore = currentscore.get(playername_);
@@ -149,7 +149,7 @@ public class ArenaScoreboard {
 									}
 								} catch (Exception e) {
 								}
-							} else if (pli.global_lost.containsKey(playername_)) {
+							} else if (pli.globalLost.containsKey(playername_)) {
 								try {
 									if (currentscore.containsKey(playername_)) {
 										int score = currentscore.get(playername_);

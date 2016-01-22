@@ -74,7 +74,7 @@ public class MessagesConfig {
 		this.getConfig().addDefault("messages.successfully_saved_arena", successfully_saved_arena);
 		this.getConfig().addDefault("messages.arena_invalid", arena_invalid);
 		this.getConfig().addDefault("messages.failed_saving_arena", failed_saving_arena);
-		this.getConfig().addDefault("messages.broadcast_players_left", broadcast_players_left);
+		this.getConfig().addDefault("messages.broadcast_players_left", broadcastPlayersLeft);
 		this.getConfig().addDefault("messages.broadcast_player_joined", broadcast_player_joined);
 		this.getConfig().addDefault("messages.player_died", player_died);
 		this.getConfig().addDefault("messages.arena_action", arena_action);
@@ -101,9 +101,9 @@ public class MessagesConfig {
 		this.getConfig().addDefault("messages.arcade_joined_waiting", arcade_joined_waiting);
 		this.getConfig().addDefault("messages.arcade_joined_spectator", arcade_joined_spectator);
 		this.getConfig().addDefault("messages.arcade_new_round", arcade_new_round);
-		this.getConfig().addDefault("messages.arena_disabled", arena_disabled);
+		this.getConfig().addDefault("messages.arena_disabled", arenaDisabled);
 		this.getConfig().addDefault("messages.you_can_leave_with", you_can_leave_with);
-		this.getConfig().addDefault("messages.no_perm_to_join_arena", no_perm_to_join_arena);
+		this.getConfig().addDefault("messages.no_perm_to_join_arena", noPermToJoinArena);
 		this.getConfig().addDefault("messages.set_kit", set_kit);
 		this.getConfig().addDefault("messages.classes_item", classes_item);
 		this.getConfig().addDefault("messages.achievement_item", achievement_item);
@@ -127,7 +127,7 @@ public class MessagesConfig {
 			this.getConfig().addDefault("messages.custom_lobby_scoreboard.line2", "Your Credits:<points>");
 			this.getConfig().addDefault("messages.custom_lobby_scoreboard.line3", "Your Wins:<wins>");
 		}
-		this.getConfig().addDefault("messages.you_got_the_achievement", you_got_the_achievement);
+		this.getConfig().addDefault("messages.you_got_the_achievement", youGotTheAchievement);
 		this.getConfig().addDefault("messages.game_started", game_started);
 		this.getConfig().addDefault("messages.author_of_the_map", author_of_the_map);
 		this.getConfig().addDefault("messages.description_of_the_map", description_of_the_map);
@@ -141,7 +141,7 @@ public class MessagesConfig {
 		this.getConfig().addDefault("messages.you_received_rewards", you_received_rewards);
 		this.getConfig().addDefault("messages.you_received_rewards_2", you_received_rewards_2);
 		this.getConfig().addDefault("messages.you_received_rewards_3", you_received_rewards_3);
-		this.getConfig().addDefault("messages.already_in_arena", already_in_arena);
+		this.getConfig().addDefault("messages.already_in_arena", alreadyInArena);
 		this.getConfig().addDefault("messages.stop_cause_maximum_game_time", stop_cause_maximum_game_time);
 		this.getConfig().addDefault("messages.compass.no_player_found", compass_no_player_found);
 		this.getConfig().addDefault("messages.compass.found_player", compass_player_found);
@@ -170,7 +170,7 @@ public class MessagesConfig {
 		this.failed_saving_arena = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.failed_saving_arena"));
 		this.arena_invalid = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.arena_invalid"));
 		this.player_died = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.player_died"));
-		this.broadcast_players_left = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.broadcast_players_left"));
+		this.broadcastPlayersLeft = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.broadcast_players_left"));
 		this.broadcast_player_joined = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.broadcast_player_joined"));
 		this.arena_action = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.arena_action"));
 		this.you_already_are_in_arena = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.you_already_are_in_arena"));
@@ -189,11 +189,11 @@ public class MessagesConfig {
 		this.arena_not_initialized = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.arena_not_initialized"));
 		this.arcade_next_minigame = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.arcade_next_minigame"));
 		this.arcade_new_round = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.arcade_new_round"));
-		this.arena_disabled = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.arena_disabled"));
+		this.arenaDisabled = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.arena_disabled"));
 		this.you_can_leave_with = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.you_can_leave_with"));
 		this.arcade_joined_waiting = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.arcade_joined_waiting"));
 		this.arcade_joined_spectator = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.arcade_joined_spectator"));
-		this.no_perm_to_join_arena = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.no_perm_to_join_arena"));
+		this.noPermToJoinArena = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.no_perm_to_join_arena"));
 		this.set_kit = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.set_kit"));
 		this.classes_item = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.classes_item"));
 		this.achievement_item = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.achievement_item"));
@@ -206,7 +206,7 @@ public class MessagesConfig {
 		this.scoreboard_lobby_title = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.scoreboard.lobby_title"));
 		this.you_got_kicked_because_vip_joined = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.you_got_kicked_because_vip_joined"));
 		this.powerup_spawned = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.powerup_spawned"));
-		this.you_got_the_achievement = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.you_got_the_achievement"));
+		this.youGotTheAchievement = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.you_got_the_achievement"));
 		this.game_started = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.game_started"));
 		this.author_of_the_map = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.author_of_the_map"));
 		this.description_of_the_map = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.description_of_the_map"));
@@ -220,7 +220,7 @@ public class MessagesConfig {
 		this.you_received_rewards = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.you_received_rewards"));
 		this.you_received_rewards_2 = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.you_received_rewards_2"));
 		this.you_received_rewards_3 = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.you_received_rewards_3"));
-		this.already_in_arena = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.already_in_arena"));
+		this.alreadyInArena = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.already_in_arena"));
 		this.stop_cause_maximum_game_time = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.stop_cause_maximum_game_time"));
 		this.compass_no_player_found = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.compass.no_player_found"));
 		this.compass_player_found = ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.compass.found_player"));
@@ -245,7 +245,7 @@ public class MessagesConfig {
 	public String failed_saving_arena = "&cFailed to save &3<arena>&c.";
 	public String failed_removing_arena = "&cFailed to remove &3<arena>&c.";
 	public String arena_invalid = "&3<arena> &cappears to be invalid.";
-	public String broadcast_players_left = "&eThere are &4<count> &eplayers left!";
+	public String broadcastPlayersLeft = "&eThere are &4<count> &eplayers left!";
 	public String broadcast_player_joined = "&2<player> &ajoined the arena! (<count>/<maxcount>)";
 	public String player_died = "&c<player> died.";
 	public String arena_action = "&aYou <action> arena &3<arena>&a!";
@@ -267,13 +267,13 @@ public class MessagesConfig {
 	public String too_many_main_guns = "&cYou already have 2 main guns, remove one first.";
 	public String successfully_set_main_gun = "&aSuccessfully set a main gun (of a maximum of two).";
 	public String arcade_next_minigame = "&6Next Arcade game: &4<minigame>&6!";
-	public String arena_disabled = "&cThe arena is disabled thus you can't join.";
+	public String arenaDisabled = "&cThe arena is disabled thus you can't join.";
 	public String all_guns = "&aYour current main guns: &2<guns>";
 	public String you_can_leave_with = "&cYou can leave with <cmd> or /l!";
 	public String arcade_joined_spectator = "&6You joined Arcade as a spectator! You'll be able to play in the next minigame.";
 	public String arcade_joined_waiting = "&6You joined Arcade! Waiting for <count> more players to start.";
 	public String arcade_new_round = "&6Next Arcade round in <count>!";
-	public String no_perm_to_join_arena = "&cYou don't have permission (arenas.<arena>) to join this arena as it's vip!";
+	public String noPermToJoinArena = "&cYou don't have permission (arenas.<arena>) to join this arena as it's vip!";
 	public String set_kit = "&aSuccessfully set &2<kit>&a!";
 	public String classes_item = "&4Classes";
 	public String achievement_item = "&4Achievements";
@@ -286,7 +286,7 @@ public class MessagesConfig {
 	public String scoreboard_lobby_title = "&4[<arena>]";
 	public String you_got_kicked_because_vip_joined = "&cYou got kicked out of the game because a vip joined!";
 	public String powerup_spawned = "&2A Powerup spawned!";
-	public String you_got_the_achievement = "&3You got the achievement &b<achievement>&3!";
+	public String youGotTheAchievement = "&3You got the achievement &b<achievement>&3!";
 	public String game_started = "&2The game has started!";
 	public String author_of_the_map = "&3You are playing on the map &b<arena> &3by &b<author>&3!";
 	public String description_of_the_map = "<description>";
@@ -300,7 +300,7 @@ public class MessagesConfig {
 	public String you_received_rewards = "&aYou received a reward of &2<economyreward>";
 	public String you_received_rewards_2 = " &aand ";
 	public String you_received_rewards_3 = "&2<itemreward>&a!";
-	public String already_in_arena = "&cYou are already in an arena.";
+	public String alreadyInArena = "&cYou are already in an arena.";
 	public String stop_cause_maximum_game_time = "&cThe game is stopping in 5 seconds because the maximum game time was reached.";
 	public String compass_no_player_found = "&cNo near players found!";
 	public String compass_player_found = "&aThe compass is tracking &3<player> &anow. Distance: <distance>";

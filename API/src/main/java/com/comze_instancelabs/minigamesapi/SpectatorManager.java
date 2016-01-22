@@ -93,8 +93,8 @@ public class SpectatorManager {
 		for (String p__ : a.getAllPlayers()) {
 			Player p_ = Bukkit.getPlayer(p__);
 			if (p_ != null) {
-				if (pli.global_players.containsKey(p__) && !pli.global_lost.containsKey(p__)) {
-					if (a.getInternalName().equalsIgnoreCase(pli.global_players.get(p__).getInternalName())) {
+				if (pli.globalPlayers.containsKey(p__) && !pli.globalLost.containsKey(p__)) {
+					if (a.getInternalName().equalsIgnoreCase(pli.globalPlayers.get(p__).getInternalName())) {
 						iconm.setOption(c, Util.getCustomHead(p__), p__, "");
 						c++;
 					}

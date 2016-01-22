@@ -58,24 +58,24 @@ public class SmartArenaBlock implements Serializable {
 	DoubleChest doubleChest = null;
 
 	public SmartArenaBlock(Block b, boolean c, boolean s) {
-		m = b.getType();
-		x = b.getX();
-		y = b.getY();
-		z = b.getZ();
-		data = b.getData();
-		world = b.getWorld().getName();
-		if (m.equals(Material.SKULL)) {
+		this.m = b.getType();
+		this.x = b.getX();
+		this.y = b.getY();
+		this.z = b.getZ();
+		this.data = b.getData();
+		this.world = b.getWorld().getName();
+		if (this.m.equals(Material.SKULL)) {
 			if (b.getState() instanceof Skull) {
-				skull_owner = ((Skull) b.getState()).getOwner();
-				skull_rotation = ((Skull) b.getState()).getRotation();
+				this.skull_owner = ((Skull) b.getState()).getOwner();
+				this.skull_rotation = ((Skull) b.getState()).getRotation();
 			}
 		}
-		if (m.equals(Material.DROPPER)) {
+		if (this.m.equals(Material.DROPPER)) {
 			if (b.getState() instanceof Dropper) {
 				setInventory(((Dropper) b.getState()).getInventory());
 			}
 		}
-		if (m.equals(Material.DISPENSER)) {
+		if (this.m.equals(Material.DISPENSER)) {
 			if (b.getState() instanceof Dispenser) {
 				setInventory(((Dispenser) b.getState()).getInventory());
 			}
@@ -93,10 +93,10 @@ public class SmartArenaBlock implements Serializable {
 
 	public SmartArenaBlock(Location l, Material m, byte data) {
 		this.m = m;
-		x = l.getBlockX();
-		y = l.getBlockY();
-		z = l.getBlockZ();
-		world = l.getWorld().getName();
+		this.x = l.getBlockX();
+		this.y = l.getBlockY();
+		this.z = l.getBlockZ();
+		this.world = l.getWorld().getName();
 		this.data = data;
 	}
 

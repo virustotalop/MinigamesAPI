@@ -166,7 +166,7 @@ public class Rewards {
 		if (Validator.isPlayerOnline(p_)) {
 			PluginInstance pli = MinigamesAPI.getAPI().getPluginInstance(plugin);
 			final Player p = Bukkit.getPlayer(p_);
-			if (!pli.global_lost.containsKey(p_)) {
+			if (!pli.globalLost.containsKey(p_)) {
 				String received_rewards_msg = pli.getMessagesConfig().you_received_rewards;
 				if (economyrewards && MinigamesAPI.economy) {
 					int multiplier = global_multiplier;

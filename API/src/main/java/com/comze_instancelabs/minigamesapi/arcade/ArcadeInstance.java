@@ -112,19 +112,19 @@ public class ArcadeInstance {
 
 		// This shouldn't be necessary anymore except for arcade spectators
 		if (pli.containsGlobalPlayer(playername)) {
-			pli.global_players.remove(playername);
+			pli.globalPlayers.remove(playername);
 		}
 		if (pli.containsGlobalLost(playername)) {
-			pli.global_lost.remove(playername);
+			pli.globalLost.remove(playername);
 		}
 		if (currentarena != null) {
-			PluginInstance pli_ = MinigamesAPI.getAPI().pinstances.get(currentarena.getPlugin());
+			PluginInstance pli_ = MinigamesAPI.getAPI().pluginInstances.get(currentarena.getPlugin());
 			if (pli_ != null) {
 				if (pli_.containsGlobalPlayer(playername)) {
-					pli_.global_players.remove(playername);
+					pli_.globalPlayers.remove(playername);
 				}
 				if (pli_.containsGlobalLost(playername)) {
-					pli_.global_lost.remove(playername);
+					pli_.globalLost.remove(playername);
 				}
 			}
 		}

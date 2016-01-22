@@ -66,11 +66,11 @@ import com.comze_instancelabs.minigamesapi.util.Validator;
 public class ArenaListener implements Listener {
 
 	private JavaPlugin plugin;
-	private static PluginInstance pli;
+	private PluginInstance pli;
 	private String minigame = "minigame";
 
 	private ArrayList<String> cmds = new ArrayList<String>();
-	private static String leave_cmd = "/leave";
+	private String leaveCmd = "/leave";
 
 	private static int loseY = 4;
 
@@ -78,7 +78,7 @@ public class ArenaListener implements Listener {
 		this.plugin = plugin;
 		this.pli = pinstance;
 		this.setName(minigame);
-		this.leave_cmd = plugin.getConfig().getString("config.leave_command");
+		this.leaveCmd = plugin.getConfig().getString("config.leave_command");
 	}
 
 	public ArenaListener(JavaPlugin plugin, PluginInstance pinstance, String minigame, ArrayList<String> cmds) {
@@ -88,8 +88,8 @@ public class ArenaListener implements Listener {
 
 	@EventHandler
 	public void onPlayerDrop(PlayerDropItemEvent event) {
-		if (pli.containsGlobalPlayer(event.getPlayer().getName())) {
-			Arena a = pli.global_players.get(event.getPlayer().getName());
+		if (this.pli.containsGlobalPlayer(event.getPlayer().getName())) {
+			Arena a = this.pli.getGlobalPlayers().get(event.getPlayer().getName());
 			if (a != null) {
 				if (a.getArenaState() != ArenaState.INGAME && a.getArcadeInstance() == null && !a.isArcadeMain()) {
 					event.setCancelled(true);
@@ -104,8 +104,8 @@ public class ArenaListener implements Listener {
 	@EventHandler
 	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		// spectators shall not pick up items
-		if (pli.containsGlobalLost(event.getPlayer().getName()) || pli.getSpectatorManager().isSpectating(event.getPlayer())) {
-			Arena a = pli.global_lost.get(event.getPlayer().getName());
+		if (this.pli.containsGlobalLost(event.getPlayer().getName()) || pli.getSpectatorManager().isSpectating(event.getPlayer())) {
+			Arena a = pli.globalLost.get(event.getPlayer().getName());
 			if (a != null) {
 				if (a.getArenaState() == ArenaState.INGAME && a.getArcadeInstance() == null) {
 					event.setCancelled(true);
@@ -119,7 +119,7 @@ public class ArenaListener implements Listener {
 		if (event.getWhoClicked() instanceof Player) {
 			Player p = (Player) event.getWhoClicked();
 			if (pli.containsGlobalPlayer(p.getName())) {
-				Arena a = pli.global_players.get(p.getName());
+				Arena a = pli.globalPlayers.get(p.getName());
 				if (a != null) {
 					if (a.getArenaState() == ArenaState.STARTING && a.getArcadeInstance() == null && !a.isArcadeMain()) {
 						event.setCancelled(true);
@@ -134,8 +134,8 @@ public class ArenaListener implements Listener {
 		try {
 			final Player p = event.getPlayer();
 			if (pli.containsGlobalPlayer(p.getName())) {
-				final Arena a = pli.global_players.get(p.getName());
-				if (!pli.containsGlobalLost(p.getName()) && !pli.global_arcade_spectator.containsKey(p.getName())) {
+				final Arena a = this.pli.globalPlayers.get(p.getName());
+				if (!pli.containsGlobalLost(p.getName()) && !this.pli.global_arcade_spectator.containsKey(p.getName())) {
 					if (a.getArenaState() == ArenaState.INGAME) {
 						if (p.getLocation().getBlockY() + loseY < a.getSpawns().get(0).getBlockY()) {
 							if (a.getArenaType() == ArenaType.JUMPNRUN) {
@@ -170,7 +170,7 @@ public class ArenaListener implements Listener {
 					}
 				} else {
 					if (a.getArenaState() == ArenaState.INGAME) {
-						if (pli.spectator_move_y_lock && event.getPlayer().getLocation().getBlockY() < (a.getSpawns().get(0).getBlockY() + 30D) || event.getPlayer().getLocation().getBlockY() > (a.getSpawns().get(0).getBlockY() + 30D)) {
+						if (this.pli.spectator_move_y_lock && event.getPlayer().getLocation().getBlockY() < (a.getSpawns().get(0).getBlockY() + 30D) || event.getPlayer().getLocation().getBlockY() > (a.getSpawns().get(0).getBlockY() + 30D)) {
 							final float b = p.getLocation().getYaw();
 							final float c = p.getLocation().getPitch();
 							Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -215,8 +215,8 @@ public class ArenaListener implements Listener {
 	public void onHunger(FoodLevelChangeEvent event) {
 		if (event.getEntity() instanceof Player) {
 			Player p = (Player) event.getEntity();
-			if (pli.containsGlobalPlayer(p.getName())) {
-				if (!pli.global_players.get(p.getName()).isArcadeMain()) {
+			if (this.pli.containsGlobalPlayer(p.getName())) {
+				if (!this.pli.globalPlayers.get(p.getName()).isArcadeMain()) {
 					event.setCancelled(true);
 				}
 			}
@@ -225,12 +225,12 @@ public class ArenaListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerDeath(PlayerDeathEvent event) {
-		if (pli.containsGlobalPlayer(event.getEntity().getName())) {
+		if (this.pli.containsGlobalPlayer(event.getEntity().getName())) {
 			event.setDeathMessage(null);
 			event.getEntity().setHealth(20D);
 			final Player p = event.getEntity();
 
-			final Arena arena = pli.global_players.get(p.getName());
+			final Arena arena = this.pli.globalPlayers.get(p.getName());
 			if (arena.getArenaState() == ArenaState.JOIN || (arena.getArenaState() == ArenaState.STARTING && !arena.getStartedIngameCountdown())) {
 				if (arena.isArcadeMain()) {
 					Util.teleportPlayerFixed(p, arena.getWaitingLobbyTemp());
@@ -242,7 +242,7 @@ public class ArenaListener implements Listener {
 
 			arena.spectate(p.getName());
 
-			pli.global_lost.put(p.getName(), arena);
+			pli.globalLost.put(p.getName(), arena);
 
 			int count = 0;
 			// for (String p_ : pli.global_players.keySet()) {
@@ -271,13 +271,13 @@ public class ArenaListener implements Listener {
 					for (String p_ : arena.getAllPlayers()) {
 						if (Validator.isPlayerOnline(p_)) {
 							Player p__ = Bukkit.getPlayer(p_);
-							Util.sendMessage(plugin, p__, pli.getMessagesConfig().broadcast_players_left.replaceAll("<count>", arena.getPlayerCount()));
+							Util.sendMessage(plugin, p__, pli.getMessagesConfig().broadcastPlayersLeft.replaceAll("<count>", arena.getPlayerCount()));
 						}
 					}
 				}
 			}, 5);
 
-			if (pli.last_man_standing) {
+			if (this.pli.last_man_standing) {
 				if (count < 2) {
 					// last man standing
 					arena.stop();
@@ -290,30 +290,30 @@ public class ArenaListener implements Listener {
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.getEntity() instanceof Player) {
 			Player p = (Player) event.getEntity();
-			if (pli.containsGlobalPlayer(p.getName()) && pli.containsGlobalLost(p.getName())) {
-				Arena a = pli.global_players.get(p.getName());
+			if (this.pli.containsGlobalPlayer(p.getName()) && this.pli.containsGlobalLost(p.getName())) {
+				Arena a = this.pli.globalPlayers.get(p.getName());
 				if (a.getArenaState() == ArenaState.INGAME && a.getArcadeInstance() == null && !a.getAlwaysPvP()) {
 					event.setCancelled(true);
 				}
 			}
 			if (event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
-				if (pli.containsGlobalPlayer(p.getName())) {
-					Arena a = pli.global_players.get(p.getName());
+				if (this.pli.containsGlobalPlayer(p.getName())) {
+					Arena a = this.pli.globalPlayers.get(p.getName());
 					if (a.getArenaState() != ArenaState.INGAME && a.getArcadeInstance() == null && !a.getAlwaysPvP()) {
 						// System.out.println(pli.getPlugin().getName() + " disallowed a pvp action.");
 						event.setCancelled(true);
 					}
-					if (pli.blood_effects && (a.getArenaState() == ArenaState.INGAME || a.getAlwaysPvP()) && !a.isArcadeMain()) {
+					if (this.pli.blood_effects && (a.getArenaState() == ArenaState.INGAME || a.getAlwaysPvP()) && !a.isArcadeMain()) {
 						Effects.playBloodEffect(p);
 					}
 				}
-				if (pli.containsGlobalLost(p.getName()) || pli.getSpectatorManager().isSpectating(p)) {
+				if (this.pli.containsGlobalLost(p.getName()) || this.pli.getSpectatorManager().isSpectating(p)) {
 					// System.out.println(pli.getPlugin().getName() + " disallowed a pvp action.");
 					event.setCancelled(true);
 				}
 			} else if (event.getCause().equals(DamageCause.FALL)) {
-				if (pli.containsGlobalPlayer(p.getName())) {
-					Arena a = pli.global_players.get(p.getName());
+				if (this.pli.containsGlobalPlayer(p.getName())) {
+					Arena a = this.pli.globalPlayers.get(p.getName());
 					if (a.getArenaState() != ArenaState.INGAME && a.getArcadeInstance() != null) {
 						event.setCancelled(true);
 					}
@@ -389,7 +389,7 @@ public class ArenaListener implements Listener {
 						event.setCancelled(true);
 						return;
 					}
-					Arena a = (Arena) pli.global_players.get(p.getName());
+					Arena a = (Arena) pli.globalPlayers.get(p.getName());
 					if (a.getArenaState() == ArenaState.INGAME) {
 						a.getLastdamager().put(p.getName(), attacker.getName());
 						if (pli.damage_identifier_effects) {
@@ -558,7 +558,7 @@ public class ArenaListener implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player p = event.getPlayer();
 		if (pli.containsGlobalPlayer(p.getName())) {
-			Arena a = pli.global_players.get(p.getName());
+			Arena a = pli.globalPlayers.get(p.getName());
 			if (a.getArenaState() != ArenaState.INGAME || pli.containsGlobalLost(p.getName())) {
 				event.setCancelled(true);
 				return;
@@ -621,7 +621,7 @@ public class ArenaListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
 		if (pli.containsGlobalPlayer(event.getPlayer().getName())) {
-			Arena a = pli.global_players.get(event.getPlayer().getName());
+			Arena a = pli.globalPlayers.get(event.getPlayer().getName());
 			Block start = event.getBlockClicked();
 			if (!a.getBoundaries().containsLocWithoutY(start.getLocation())) {
 				event.setCancelled(true);
@@ -661,7 +661,7 @@ public class ArenaListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player p = event.getPlayer();
 		if (pli.containsGlobalPlayer(p.getName())) {
-			Arena a = pli.global_players.get(p.getName());
+			Arena a = pli.globalPlayers.get(p.getName());
 			if (a.getArenaState() != ArenaState.INGAME || pli.containsGlobalLost(p.getName()) || pli.getSpectatorManager().isSpectating(p)) {
 				event.setCancelled(true);
 				return;
@@ -732,7 +732,7 @@ public class ArenaListener implements Listener {
 									if (loc.getWorld() != null) {
 										if (loc.getWorld().getName().equalsIgnoreCase(s.getLocation().getWorld().getName())) {
 											if (loc.distance(s.getLocation()) < 1) {
-												pli.global_players.get(event.getPlayer().getName()).leavePlayer(event.getPlayer().getName(), false, false);
+												pli.globalPlayers.get(event.getPlayer().getName()).leavePlayer(event.getPlayer().getName(), false, false);
 												return;
 											}
 										}
@@ -745,7 +745,7 @@ public class ArenaListener implements Listener {
 			} else if (event.getClickedBlock().getType() == Material.CHEST) {
 				Player p = event.getPlayer();
 				if (pli.containsGlobalPlayer(p.getName())) {
-					Arena a = pli.global_players.get(p.getName());
+					Arena a = pli.globalPlayers.get(p.getName());
 					if (a.getArenaState() == ArenaState.INGAME) {
 						a.getSmartReset().addChanged(event.getClickedBlock(), true);
 					}
@@ -753,7 +753,7 @@ public class ArenaListener implements Listener {
 			} else if (event.getClickedBlock().getType() == Material.TNT) {
 				Player p = event.getPlayer();
 				if (pli.containsGlobalPlayer(p.getName())) {
-					Arena a = pli.global_players.get(p.getName());
+					Arena a = pli.globalPlayers.get(p.getName());
 					if (a.getArenaState() == ArenaState.INGAME) {
 						a.getSmartReset().addChanged(event.getClickedBlock(), false);
 						// TODO maybe add radius of blocks around this tnt manually
@@ -762,7 +762,7 @@ public class ArenaListener implements Listener {
 			} else if (event.getPlayer().getItemInHand().getType() == Material.WATER_BUCKET || event.getPlayer().getItemInHand().getType() == Material.WATER || event.getPlayer().getItemInHand().getType() == Material.LAVA_BUCKET || event.getPlayer().getItemInHand().getType() == Material.LAVA) {
 				Player p = event.getPlayer();
 				if (pli.containsGlobalPlayer(p.getName())) {
-					Arena a = pli.global_players.get(p.getName());
+					Arena a = pli.globalPlayers.get(p.getName());
 					if (!a.getBoundaries().containsLocWithoutY(event.getClickedBlock().getLocation())) {
 						event.setCancelled(true);
 						return;
@@ -775,7 +775,7 @@ public class ArenaListener implements Listener {
 			} else if (event.getClickedBlock().getType() == Material.DISPENSER || event.getClickedBlock().getType() == Material.DROPPER) {
 				Player p = event.getPlayer();
 				if (pli.containsGlobalPlayer(p.getName())) {
-					Arena a = pli.global_players.get(p.getName());
+					Arena a = pli.globalPlayers.get(p.getName());
 					if (a.getArenaState() == ArenaState.INGAME) {
 						a.getSmartReset().addChanged(event.getClickedBlock(), false);
 					}
@@ -792,7 +792,7 @@ public class ArenaListener implements Listener {
 			if (!pli.containsGlobalPlayer(p.getName())) {
 				return;
 			}
-			Arena a = pli.global_players.get(p.getName());
+			Arena a = pli.globalPlayers.get(p.getName());
 			if (a.isArcadeMain()) {
 				return;
 			}
@@ -912,10 +912,10 @@ public class ArenaListener implements Listener {
 		final Player p = event.getPlayer();
 		pli.getStatsInstance().update(p.getName());
 		if (pli.containsGlobalPlayer(p.getName())) {
-			pli.global_players.remove(p.getName());
+			pli.globalPlayers.remove(p.getName());
 		}
 		if (pli.containsGlobalLost(p.getName())) {
-			pli.global_lost.remove(p.getName());
+			pli.globalLost.remove(p.getName());
 		}
 		if (plugin.getConfig().isSet("temp.left_players." + p.getName())) {
 			Bukkit.getScheduler().runTaskLater(MinigamesAPI.getAPI(), new Runnable() {
@@ -972,11 +972,11 @@ public class ArenaListener implements Listener {
 	@EventHandler
 	public void onPlayerLeave(PlayerQuitEvent event) {
 		if (pli.containsGlobalPlayer(event.getPlayer().getName())) {
-			Arena arena = pli.global_players.get(event.getPlayer().getName());
+			Arena arena = pli.globalPlayers.get(event.getPlayer().getName());
 			MinigamesAPI.getAPI().getLogger().info(event.getPlayer().getName() + " quit while in arena " + arena.getInternalName() + ".");
 			int count = 0;
-			for (String p_ : pli.global_players.keySet()) {
-				if (pli.global_players.get(p_).getInternalName().equalsIgnoreCase(arena.getInternalName())) {
+			for (String p_ : pli.globalPlayers.keySet()) {
+				if (pli.globalPlayers.get(p_).getInternalName().equalsIgnoreCase(arena.getInternalName())) {
 					count++;
 				}
 			}
@@ -1026,7 +1026,7 @@ public class ArenaListener implements Listener {
 				String msg = String.format(event.getFormat(), p.getName(), event.getMessage());
 				for (Player receiver : event.getRecipients()) {
 					if (pli.containsGlobalPlayer(receiver.getName())) {
-						if (pli.global_players.get(receiver.getName()) == pli.global_players.get(p.getName())) {
+						if (pli.globalPlayers.get(receiver.getName()) == pli.globalPlayers.get(p.getName())) {
 							receiver.sendMessage(msg);
 						}
 					}
@@ -1038,9 +1038,9 @@ public class ArenaListener implements Listener {
 
 	@EventHandler
 	public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
-		if (event.getMessage().equalsIgnoreCase(leave_cmd) || event.getMessage().equalsIgnoreCase("/l")) {
+		if (event.getMessage().equalsIgnoreCase(this.leaveCmd) || event.getMessage().equalsIgnoreCase("/l")) {
 			if (pli.containsGlobalPlayer(event.getPlayer().getName())) {
-				Arena arena = pli.global_players.get(event.getPlayer().getName());
+				Arena arena = pli.globalPlayers.get(event.getPlayer().getName());
 				arena.leavePlayer(event.getPlayer().getName(), false, false);
 				event.setCancelled(true);
 				return;
@@ -1060,7 +1060,7 @@ public class ArenaListener implements Listener {
 				}
 			}
 			if (!cont) {
-				Util.sendMessage(plugin, event.getPlayer(), pli.getMessagesConfig().you_can_leave_with.replaceAll("<cmd>", leave_cmd));
+				Util.sendMessage(plugin, event.getPlayer(), pli.getMessagesConfig().you_can_leave_with.replaceAll("<cmd>", this.leaveCmd));
 				event.setCancelled(true);
 				return;
 			}
@@ -1070,7 +1070,7 @@ public class ArenaListener implements Listener {
 	// TP Fix start
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		if (event.getCause().equals(TeleportCause.UNKNOWN) && pli.spectator_mode_1_8) {
+		if (event.getCause().equals(TeleportCause.UNKNOWN) && pli.spectatorMode1_8) {
 			// Don't hide/show players when 1.8 spectator mode is enabled
 			return;
 		}

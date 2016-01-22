@@ -3,7 +3,6 @@ package com.comze_instancelabs.minigamesapi.util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comze_instancelabs.minigamesapi.Arena;
@@ -19,11 +18,7 @@ public class Validator {
 	 * @return
 	 */
 	public static boolean isPlayerOnline(String player) {
-		Player p = Bukkit.getPlayer(player);
-		if (p != null) {
-			return true;
-		}
-		return false;
+		return Bukkit.getPlayer(player) != null;
 	}
 
 	/***
@@ -46,10 +41,10 @@ public class Validator {
 		if (!isPlayerOnline(player)) {
 			return false;
 		}
-		if (!MinigamesAPI.getAPI().getPluginInstance(plugin).global_players.containsKey(player)) {
+		if (!MinigamesAPI.getAPI().getPluginInstance(plugin).globalPlayers.containsKey(player)) {
 			return false;
 		}
-		if (!MinigamesAPI.getAPI().getPluginInstance(plugin).global_players.get(player).getInternalName().equalsIgnoreCase(arena)) {
+		if (!MinigamesAPI.getAPI().getPluginInstance(plugin).globalPlayers.get(player).getInternalName().equalsIgnoreCase(arena)) {
 			return false;
 		}
 		return true;

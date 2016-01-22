@@ -11,14 +11,14 @@ import com.comze_instancelabs.minigamesapi.util.AClass;
 
 public class ArenaPlayer {
 
-	String playername;
-	ItemStack[] inv;
-	ItemStack[] armor_inv;
-	GameMode original_gamemode = GameMode.SURVIVAL;
-	int original_xplvl = 0;
-	boolean noreward = false;
-	Arena currentArena;
-	AClass currentClass;
+	private String playername;
+	private ItemStack[] inv;
+	private ItemStack[] armorInv;
+	private GameMode originalGamemode = GameMode.SURVIVAL;
+	private int originalXpLvl = 0;
+	private boolean noreward = false;
+	private Arena currentArena;
+	private AClass currentClass;
 
 	private static HashMap<String, ArenaPlayer> players = new HashMap<String, ArenaPlayer>();
 
@@ -39,33 +39,33 @@ public class ArenaPlayer {
 		return Bukkit.getPlayer(playername);
 	}
 
-	public void setInventories(ItemStack[] inv, ItemStack[] armor_inv) {
+	public void setInventories(ItemStack[] inv, ItemStack[] armorInv) {
 		this.inv = inv;
-		this.armor_inv = armor_inv;
+		this.armorInv = armorInv;
 	}
 
 	public ItemStack[] getInventory() {
-		return inv;
+		return this.inv;
 	}
 
 	public ItemStack[] getArmorInventory() {
-		return armor_inv;
+		return this.armorInv;
 	}
 
 	public GameMode getOriginalGamemode() {
-		return original_gamemode;
+		return originalGamemode;
 	}
 
 	public void setOriginalGamemode(GameMode original_gamemode) {
-		this.original_gamemode = original_gamemode;
+		this.originalGamemode = original_gamemode;
 	}
 
 	public int getOriginalXplvl() {
-		return original_xplvl;
+		return originalXpLvl;
 	}
 
 	public void setOriginalXplvl(int original_xplvl) {
-		this.original_xplvl = original_xplvl;
+		this.originalXpLvl = original_xplvl;
 	}
 
 	public boolean isNoReward() {

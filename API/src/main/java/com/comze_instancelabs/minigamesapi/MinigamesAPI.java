@@ -46,7 +46,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 	public HashMap<String, Party> global_party = new HashMap<String, Party>();
 	public HashMap<String, ArrayList<Party>> global_party_invites = new HashMap<String, ArrayList<Party>>();
 
-	public static HashMap<JavaPlugin, PluginInstance> pinstances = new HashMap<JavaPlugin, PluginInstance>();
+	public HashMap<JavaPlugin, PluginInstance> pluginInstances = new HashMap<JavaPlugin, PluginInstance>();
 
 	public PartyMessagesConfig partymessages;
 	public StatsGlobalConfig statsglobal;
@@ -93,7 +93,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 			public void run() {
 				// Reset all arena signs and check if any arena was interrupted
 				int i = 0;
-				for (PluginInstance pli : MinigamesAPI.getAPI().pinstances.values()) {
+				for (PluginInstance pli : MinigamesAPI.getAPI().pluginInstances.values()) {
 					for (Arena a : pli.getArenas()) {
 						if (a != null) {
 							if (a.isSuccessfullyInit()) {
@@ -112,7 +112,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 	}
 
 	public void onDisable() {
-		for (PluginInstance pli : this.pinstances.values()) {
+		for (PluginInstance pli : this.pluginInstances.values()) {
 			// Reset arenas
 			for (Arena a : pli.getArenas()) {
 				if (a != null) {
@@ -156,15 +156,15 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 	 * @return
 	 */
 	public static MinigamesAPI setupAPI(JavaPlugin plugin_, String minigame, Class<?> arenaclass, ArenasConfig arenasconfig, MessagesConfig messagesconfig, ClassesConfig classesconfig, StatsConfig statsconfig, DefaultConfig defaultconfig, boolean customlistener) {
-		pinstances.put(plugin_, new PluginInstance(plugin_, arenasconfig, messagesconfig, classesconfig, statsconfig, new ArrayList<Arena>()));
+		MinigamesAPI.getAPI().pluginInstances.put(plugin_, new PluginInstance(plugin_, arenasconfig, messagesconfig, classesconfig, statsconfig, new ArrayList<Arena>()));
 		if (!customlistener) {
-			ArenaListener al = new ArenaListener(plugin_, pinstances.get(plugin_), minigame);
-			pinstances.get(plugin_).setArenaListener(al);
+			ArenaListener al = new ArenaListener(plugin_, MinigamesAPI.getAPI().pluginInstances.get(plugin_), minigame);
+			MinigamesAPI.getAPI().pluginInstances.get(plugin_).setArenaListener(al);
 			Bukkit.getPluginManager().registerEvents(al, plugin_);
 		}
 		Classes.loadClasses(plugin_);
 		Guns.loadGuns(plugin_);
-		pinstances.get(plugin_).getShopHandler().loadShopItems();
+		MinigamesAPI.getAPI().pluginInstances.get(plugin_).getShopHandler().loadShopItems();
 		return instance;
 	}
 
@@ -173,11 +173,11 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 	}
 
 	public static void registerArenaSetup(JavaPlugin plugin_, ArenaSetup arenasetup) {
-		pinstances.get(plugin_).arenaSetup = arenasetup;
+		MinigamesAPI.getAPI().pluginInstances.get(plugin_).arenaSetup = arenasetup;
 	}
 
 	public static void registerScoreboard(JavaPlugin plugin_, ArenaScoreboard board) {
-		pinstances.get(plugin_).scoreboardManager = board;
+		MinigamesAPI.getAPI().pluginInstances.get(plugin_).scoreboardManager = board;
 	}
 
 	/**
@@ -214,9 +214,9 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 		StatsConfig statsconfig = new StatsConfig(plugin_, false);
 		DefaultConfig.init(plugin_, false);
 		PluginInstance pli = new PluginInstance(plugin_, arenasconfig, messagesconfig, classesconfig, statsconfig);
-		pinstances.put(plugin_, pli);
-		ArenaListener al = new ArenaListener(plugin_, pinstances.get(plugin_), minigame);
-		pinstances.get(plugin_).setArenaListener(al);
+		MinigamesAPI.getAPI().pluginInstances.put(plugin_, pli);
+		ArenaListener al = new ArenaListener(plugin_, MinigamesAPI.getAPI().pluginInstances.get(plugin_), minigame);
+		MinigamesAPI.getAPI().pluginInstances.get(plugin_).setArenaListener(al);
 		Bukkit.getPluginManager().registerEvents(al, plugin_);
 		Classes.loadClasses(plugin_);
 		pli.getShopHandler().loadShopItems();
@@ -255,9 +255,9 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 				return true;
 			}
 			Player p = (Player) sender;
-			for (PluginInstance pli : MinigamesAPI.getAPI().pinstances.values()) {
+			for (PluginInstance pli : MinigamesAPI.getAPI().pluginInstances.values()) {
 				if (pli.containsGlobalPlayer(p.getName())) {
-					Arena a = pli.global_players.get(p.getName());
+					Arena a = pli.globalPlayers.get(p.getName());
 					System.out.println(a.getName());
 					if (a.getArenaState() == ArenaState.JOIN || (a.getArenaState() == ArenaState.STARTING && !a.getIngameCountdownStarted())) {
 						a.start(true);
@@ -305,31 +305,31 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 						String p = args[1];
 						sender.sendMessage("Debug info about " + p);
 						sender.sendMessage("~ global_players: ");
-						for (PluginInstance pli : pinstances.values()) {
-							if (pli.global_players.containsKey(p)) {
+						for (PluginInstance pli : pluginInstances.values()) {
+							if (pli.globalPlayers.containsKey(p)) {
 								sender.sendMessage(" " + pli.getPlugin().getName());
 							}
 						}
 						sender.sendMessage("~ global_lost: ");
-						for (PluginInstance pli : pinstances.values()) {
-							if (pli.global_lost.containsKey(p)) {
+						for (PluginInstance pli : pluginInstances.values()) {
+							if (pli.globalLost.containsKey(p)) {
 								sender.sendMessage(" " + pli.getPlugin().getName());
 							}
 						}
 						sender.sendMessage("~ SpectatorManager: ");
-						for (PluginInstance pli : pinstances.values()) {
+						for (PluginInstance pli : pluginInstances.values()) {
 							if (pli.getSpectatorManager().isSpectating(Bukkit.getPlayer(p))) {
 								sender.sendMessage(" " + pli.getPlugin().getName());
 							}
 						}
 						sender.sendMessage("~ Arenas: ");
-						for (PluginInstance pli : pinstances.values()) {
-							if (pli.global_players.containsKey(p)) {
-								sender.sendMessage(" " + pli.global_players.get(p).getInternalName() + " - " + pli.global_players.get(p).getArenaState());
+						for (PluginInstance pli : pluginInstances.values()) {
+							if (pli.globalPlayers.containsKey(p)) {
+								sender.sendMessage(" " + pli.globalPlayers.get(p).getInternalName() + " - " + pli.globalPlayers.get(p).getArenaState());
 							}
 						}
 					} else {
-						for (PluginInstance pli : pinstances.values()) {
+						for (PluginInstance pli : pluginInstances.values()) {
 							sender.sendMessage("~ All players for " + pli.getPlugin().getName() + ": ");
 							for (Arena a : pli.getArenas()) {
 								if (a != null) {
@@ -347,7 +347,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 					sender.sendMessage(ChatColor.GOLD + "Debug mode is now: " + debug);
 				} else if (args[0].equalsIgnoreCase("list")) {
 					int c = 0;
-					for (PluginInstance pli : MinigamesAPI.getAPI().pinstances.values()) {
+					for (PluginInstance pli : MinigamesAPI.getAPI().pluginInstances.values()) {
 						c++;
 						sender.sendMessage("~ " + pli.getPlugin().getName() + ": " + pli.getArenas().size() + " Arenas");
 					}
@@ -412,7 +412,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 					if (sender instanceof Player) {
 						Player p = (Player) sender;
 						if (p.isOp()) {
-							PluginInstance pli = this.pinstances.get(Bukkit.getPluginManager().getPlugin("MGSkyWars"));
+							PluginInstance pli = this.pluginInstances.get(Bukkit.getPluginManager().getPlugin("MGSkyWars"));
 							BungeeSocket.sendSignUpdate(pli, pli.getArenas().get(0));
 						}
 					}
@@ -422,7 +422,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 			if (args.length < 1) {
 				sender.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "MinigamesLib <3 " + this.getDescription().getVersion());
 				int c = 0;
-				for (PluginInstance pli : MinigamesAPI.getAPI().pinstances.values()) {
+				for (PluginInstance pli : MinigamesAPI.getAPI().pluginInstances.values()) {
 					c++;
 					sender.sendMessage("~ " + ChatColor.GRAY + pli.getPlugin().getName() + ": " + ChatColor.WHITE + pli.getArenas().size() + " Arenas");
 				}
@@ -488,14 +488,14 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 				final String playername = playerData.split(":")[2];
 				System.out.println(plugin_ + " -> " + arena);
 				JavaPlugin plugin = null;
-				for (JavaPlugin pl : this.pinstances.keySet()) {
+				for (JavaPlugin pl : this.pluginInstances.keySet()) {
 					if (pl.getName().contains(plugin_)) {
 						plugin = pl;
 						break;
 					}
 				}
 				if (plugin != null) {
-					final Arena a = pinstances.get(plugin).getArenaByName(arena);
+					final Arena a = pluginInstances.get(plugin).getArenaByName(arena);
 					if (a != null) {
 						if (a.getArenaState() != ArenaState.INGAME && a.getArenaState() != ArenaState.RESTARTING && !a.containsPlayer(playername)) {
 							Bukkit.getScheduler().runTaskLater(this, new Runnable() {
@@ -524,9 +524,9 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 				final String plugin_ = requestData.split(":")[0];
 				final String arena = requestData.split(":")[1];
 				System.out.println(plugin_ + " -> " + arena);
-				for (JavaPlugin pl : this.pinstances.keySet()) {
+				for (JavaPlugin pl : this.pluginInstances.keySet()) {
 					if (pl.getName().contains(plugin_)) {
-						Arena a = pinstances.get(pl).getArenaByName(arena);
+						Arena a = pluginInstances.get(pl).getArenaByName(arena);
 						if (a != null) {
 							BungeeUtil.sendSignUpdateRequest(pl, pl.getName(), a);
 						} else {
@@ -542,7 +542,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 	}
 
 	public PluginInstance getPluginInstance(JavaPlugin plugin) {
-		return pinstances.get(plugin);
+		return pluginInstances.get(plugin);
 	}
 
 }
