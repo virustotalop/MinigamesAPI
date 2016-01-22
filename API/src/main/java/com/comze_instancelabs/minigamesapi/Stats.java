@@ -98,20 +98,20 @@ public class Stats {
 			return;
 		}
 		// Update sql server with kills stats at the end
-		if (a.temp_kill_count.containsKey(p.getName())) {
+		if (a.getTempKillCount().containsKey(p.getName())) {
 			if (MinigamesAPI.debug) {
-				System.out.println(a.temp_kill_count.get(p.getName()));
+				System.out.println(a.getTempKillCount().get(p.getName()));
 			}
-			pli.getSQLInstance().updateKillerStats(p, a.temp_kill_count.get(p.getName()));
-			a.temp_kill_count.remove(p.getName());
+			pli.getSQLInstance().updateKillerStats(p, a.getTempKillCount().get(p.getName()));
+			a.getTempKillCount().remove(p.getName());
 		}
 		// death stats
-		if (a.temp_death_count.containsKey(p.getName())) {
+		if (a.getTempDeathCount().containsKey(p.getName())) {
 			if (MinigamesAPI.debug) {
-				System.out.println(a.temp_death_count.get(p.getName()));
+				System.out.println(a.getTempDeathCount().get(p.getName()));
 			}
-			pli.getSQLInstance().updateDeathStats(p, a.temp_death_count.get(p.getName()));
-			a.temp_death_count.remove(p.getName());
+			pli.getSQLInstance().updateDeathStats(p, a.getTempDeathCount().get(p.getName()));
+			a.getTempDeathCount().remove(p.getName());
 		}
 	}
 

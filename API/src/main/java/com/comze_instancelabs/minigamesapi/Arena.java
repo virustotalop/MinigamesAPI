@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -33,59 +36,71 @@ import com.comze_instancelabs.minigamesapi.util.Validator;
 
 public class Arena {
 
-	// Plugin the arena belongs to
-	public JavaPlugin plugin;
-	public PluginInstance pli;
-	private ArcadeInstance ai;
+	private static PluginInstance pli;
+	private static ArcadeInstance ai;
+	
+	private JavaPlugin plugin;
+	
 	private boolean isArcadeMain = false;
+	
 	private boolean isSuccessfullyInitialized = false;
-
+	
 	private ArrayList<Location> spawns = new ArrayList<Location>();
-	private HashMap<String, Location> pspawnloc = new HashMap<String, Location>();
-	public HashMap<String, String> lastdamager = new HashMap<String, String>();
-	public HashMap<String, Integer> temp_kill_count = new HashMap<String, Integer>();
-	public HashMap<String, Integer> temp_death_count = new HashMap<String, Integer>();
-
-	private Location mainlobby;
-	private Location waitinglobby;
-	private Location specspawn;
-	private Location signloc;
-
-	private int max_players;
-	private int min_players;
-	private boolean viparena;
-	private String permission_node;
-
+	
+	private HashMap<String, Location> pSpawnLoc = new HashMap<String, Location>();
+	
+	private HashMap<String, String> lastdamager = new HashMap<String, String>();
+	
+	private HashMap<String, Integer> tempKillCount = new HashMap<String, Integer>();
+	
+	private HashMap<String, Integer> tempDeathCount = new HashMap<String, Integer>();
+	
+	private Location mainLobby;
+	private Location waitingLobby;
+	
+	private Location specSpawn;
+	private Location signLoc;
+	
+	private int maxPlayers;
+	private int minPlayers;
+	
+	private boolean vipArena;
+	
+	private String permissionNode;
+	
 	private ArrayList<String> players = new ArrayList<String>();
-	private ArrayList<String> temp_players = new ArrayList<String>();
-
+	private ArrayList<String> tempPlayers = new ArrayList<String>();
+	
 	private ArenaType type = ArenaType.DEFAULT;
+	
 	private ArenaState currentstate = ArenaState.JOIN;
-	String name = "mainarena";
-	String displayname = "mainarena";
+	
+	private String name = "mainarena";
+	
+	private String displayname = "mainarena";
 
 	private Arena currentarena;
-	boolean started = false;
-	boolean startedIngameCountdown = false;
+	
+	private boolean started = false;
+	private boolean startedIngameCountdown = false;
 	private boolean showArenascoreboard = true;
 	private boolean alwaysPvP = false;
-
-	SmartReset sr = null;
-
-	Cuboid boundaries;
-	Cuboid lobby_boundaries;
-	Cuboid spec_boundaries;
-
-	boolean temp_countdown = true;
-	boolean skip_join_lobby = false;
-
-	int currentspawn = 0;
-
-	int global_coin_multiplier = 1;
-
-	BukkitTask maximum_game_time;
-
-	ArrayList<ItemStack> global_drops = new ArrayList<ItemStack>();
+	private SmartReset sr = null;
+	
+	
+	private Cuboid boundaries;
+	private Cuboid lobbyBoundaries;
+	private Cuboid specBoundaries;
+	
+	private boolean tempCountdown = true;
+	private boolean skipJoinLobby = false;
+	
+	private int currentspawn = 0;
+	private static int globalCoinMultiplier = 1;
+	
+	private BukkitTask maximumGameTime;
+	
+	private ArrayList<ItemStack> globalDrops = new ArrayList<ItemStack>();
 
 	/**
 	 * Creates a normal singlespawn arena
@@ -95,7 +110,8 @@ public class Arena {
 	 * @param name
 	 *            name of the arena
 	 */
-	public Arena(JavaPlugin plugin, String name) {
+	public Arena(JavaPlugin plugin, String name) 
+	{
 		currentarena = this;
 		this.plugin = plugin;
 		this.name = name;
@@ -118,13 +134,13 @@ public class Arena {
 
 	// This is for loading existing arenas
 	public void init(Location signloc, ArrayList<Location> spawns, Location mainlobby, Location waitinglobby, int max_players, int min_players, boolean viparena) {
-		this.signloc = signloc;
+		this.signLoc = signloc;
 		this.spawns = spawns;
-		this.mainlobby = mainlobby;
-		this.waitinglobby = waitinglobby;
-		this.viparena = viparena;
-		this.min_players = min_players;
-		this.max_players = max_players;
+		this.mainLobby = mainlobby;
+		this.waitingLobby = waitinglobby;
+		this.vipArena = viparena;
+		this.minPlayers = min_players;
+		this.maxPlayers = max_players;
 		this.showArenascoreboard = pli.arenaSetup.getShowScoreboard(plugin, this.getInternalName());
 		isSuccessfullyInitialized = true;
 		if (Util.isComponentForArenaValid(plugin, this.getInternalName(), "bounds.low") && Util.isComponentForArenaValid(plugin, this.getInternalName(), "bounds.high")) {
@@ -143,21 +159,21 @@ public class Arena {
 		}
 		if (Util.isComponentForArenaValid(plugin, this.getInternalName(), "lobbybounds.bounds.low") && Util.isComponentForArenaValid(plugin, this.getInternalName(), "lobbybounds.bounds.high")) {
 			try {
-				this.lobby_boundaries = new Cuboid(Util.getComponentForArena(plugin, this.getInternalName(), "lobbybounds.bounds.low"), Util.getComponentForArena(plugin, this.getInternalName(), "lobbybounds.bounds.high"));
+				this.lobbyBoundaries = new Cuboid(Util.getComponentForArena(plugin, this.getInternalName(), "lobbybounds.bounds.low"), Util.getComponentForArena(plugin, this.getInternalName(), "lobbybounds.bounds.high"));
 			} catch (Exception e) {
 				isSuccessfullyInitialized = false;
 			}
 		}
 		if (Util.isComponentForArenaValid(plugin, this.getInternalName(), "specbounds.bounds.low") && Util.isComponentForArenaValid(plugin, this.getInternalName(), "specbounds.bounds.high")) {
 			try {
-				this.spec_boundaries = new Cuboid(Util.getComponentForArena(plugin, this.getInternalName(), "specbounds.bounds.low"), Util.getComponentForArena(plugin, this.getInternalName(), "specbounds.bounds.high"));
+				this.specBoundaries = new Cuboid(Util.getComponentForArena(plugin, this.getInternalName(), "specbounds.bounds.low"), Util.getComponentForArena(plugin, this.getInternalName(), "specbounds.bounds.high"));
 			} catch (Exception e) {
 				isSuccessfullyInitialized = false;
 			}
 		}
 
 		if (Util.isComponentForArenaValid(plugin, this.getInternalName(), "specspawn")) {
-			this.specspawn = Util.getComponentForArena(plugin, this.getInternalName(), "specspawn");
+			this.specSpawn = Util.getComponentForArena(plugin, this.getInternalName(), "specspawn");
 		}
 
 		String path = "arenas." + name + ".displayname";
@@ -199,11 +215,11 @@ public class Arena {
 	}
 
 	public Location getSignLocation() {
-		return this.signloc;
+		return this.signLoc;
 	}
 
 	public void setSignLocation(Location l) {
-		this.signloc = l;
+		this.signLoc = l;
 	}
 
 	public ArrayList<Location> getSpawns() {
@@ -215,11 +231,11 @@ public class Arena {
 	}
 
 	public Cuboid getLobbyBoundaries() {
-		return this.lobby_boundaries;
+		return this.lobbyBoundaries;
 	}
 
 	public Cuboid getSpecBoundaries() {
-		return this.spec_boundaries;
+		return this.specBoundaries;
 	}
 
 	public String getInternalName() {
@@ -241,31 +257,47 @@ public class Arena {
 	}
 
 	public int getMaxPlayers() {
-		return this.max_players;
+		return this.maxPlayers;
+	}
+	
+	public Location getMainLobby() {
+		return this.mainLobby;
 	}
 
 	public int getMinPlayers() {
-		return this.min_players;
+		return this.minPlayers;
 	}
 
 	public void setMinPlayers(int i) {
-		this.min_players = i;
+		this.minPlayers = i;
 	}
 
 	public void setMaxPlayers(int i) {
-		this.max_players = i;
+		this.maxPlayers = i;
 	}
 
 	public boolean isVIPArena() {
-		return this.viparena;
+		return this.vipArena;
 	}
 
 	public void setVIPArena(boolean t) {
-		this.viparena = t;
+		this.vipArena = t;
 	}
 
+	public Location getWaitingLobby() {
+		return this.waitingLobby;
+	}
+	
 	public ArrayList<String> getAllPlayers() {
 		return this.players;
+	}
+	
+	public HashMap<String, Location> getpSpawnLoc() {
+		return pSpawnLoc;
+	}
+
+	public void setPlayerSpawnLoc(HashMap<String, Location> pSpawnLoc) {
+		this.pSpawnLoc = pSpawnLoc;
 	}
 
 	public boolean containsPlayer(String playername) {
@@ -333,7 +365,7 @@ public class Arena {
 				}
 			}
 		}
-		if (ai == null && this.getAllPlayers().size() > this.max_players - 1) {
+		if (ai == null && this.getAllPlayers().size() > this.maxPlayers - 1) {
 			// arena full
 
 			// if player vip -> kick someone and continue
@@ -364,7 +396,7 @@ public class Arena {
 		if (MinigamesAPI.getAPI().global_party.containsKey(playername)) {
 			Party party = MinigamesAPI.getAPI().global_party.get(playername);
 			int playersize = party.getPlayers().size() + 1;
-			if (this.getAllPlayers().size() + playersize > this.max_players) {
+			if (this.getAllPlayers().size() + playersize > this.maxPlayers) {
 				Bukkit.getPlayer(playername).sendMessage(MinigamesAPI.getAPI().partymessages.party_too_big_to_join);
 				return;
 			} else {
@@ -385,7 +417,7 @@ public class Arena {
 			}
 		}
 
-		if (this.getAllPlayers().size() == this.max_players - 1) {
+		if (this.getAllPlayers().size() == this.maxPlayers - 1) {
 			if (currentlobbycount > 16 && this.getArenaState() == ArenaState.STARTING) {
 				currentlobbycount = 16;
 			}
@@ -414,7 +446,7 @@ public class Arena {
 						}
 					} catch (Exception e) {
 						System.out.println("Failed playing hologram: " + e.getMessage());
-						if (MinigamesAPI.getAPI().debug) {
+						if (MinigamesAPI.debug) {
 							e.printStackTrace();
 						}
 					}
@@ -432,7 +464,7 @@ public class Arena {
 			Util.updateSign(plugin, this);
 
 			if (ai == null && !this.isArcadeMain()) {
-				this.skip_join_lobby = plugin.getConfig().getBoolean("config.countdowns.skip_lobby");
+				this.setSkipJoinLobby(plugin.getConfig().getBoolean("config.countdowns.skip_lobby"));
 			}
 
 			final Arena a = this;
@@ -449,7 +481,7 @@ public class Arena {
 				p.setHealth(20D);
 				return;
 			} else {
-				if (startedIngameCountdown) {
+				if (getStartedIngameCountdown()) {
 					pli.scoreboardLobbyManager.removeScoreboard(this.getInternalName(), p);
 					Util.teleportAllPlayers(currentarena.getArena().getAllPlayers(), currentarena.getArena().spawns);
 					p.setFoodLevel(5);
@@ -478,8 +510,8 @@ public class Arena {
 					return;
 				} else {
 					pli.scoreboardLobbyManager.updateScoreboard(plugin, this);
-					if (!skip_join_lobby) {
-						Util.teleportPlayerFixed(p, this.waitinglobby);
+					if (!getSkipJoinLobby()) {
+						Util.teleportPlayerFixed(p, this.waitingLobby);
 						Bukkit.getScheduler().runTaskLater(MinigamesAPI.getAPI(), new Runnable() {
 							public void run() {
 								p.setHealth(20D);
@@ -506,14 +538,14 @@ public class Arena {
 					p.setHealth(20D);
 				}
 			}, 15L);
-			if (!skip_join_lobby) {
-				if (ai == null && this.getAllPlayers().size() > this.min_players - 1) {
-					this.startLobby(temp_countdown);
+			if (!this.getSkipJoinLobby()) {
+				if (this.ai == null && this.getAllPlayers().size() > this.minPlayers - 1) {
+					this.startLobby(tempCountdown);
 				} else if (ai != null) {
-					this.startLobby(temp_countdown);
+					this.startLobby(tempCountdown);
 				}
 			} else {
-				if (ai == null && !this.isArcadeMain() && this.getAllPlayers().size() > this.min_players - 1) {
+				if (ai == null && !this.isArcadeMain() && this.getAllPlayers().size() > this.minPlayers - 1) {
 					this.startLobby(false);
 				}
 			}
@@ -527,7 +559,7 @@ public class Arena {
 	 * @param countdown
 	 */
 	public void joinPlayerLobby(String playername, boolean countdown) {
-		temp_countdown = countdown;
+		tempCountdown = countdown;
 		joinPlayerLobby(playername);
 	}
 
@@ -540,7 +572,7 @@ public class Arena {
 	 *            the ArcadeInstance
 	 */
 	public void joinPlayerLobby(String playername, ArcadeInstance ai, boolean countdown, boolean skip_lobby) {
-		this.skip_join_lobby = skip_lobby;
+		this.setSkipJoinLobby(skip_lobby);
 		this.ai = ai;
 		joinPlayerLobby(playername, countdown); // join playerlobby without lobby countdown
 	}
@@ -568,10 +600,10 @@ public class Arena {
 		if (!endofGame) {
 			if (this.getAllPlayers().size() < 2) {
 				if (this.getArenaState() != ArenaState.JOIN) {
-					if (this.getArenaState() == ArenaState.STARTING && !startedIngameCountdown) {
+					if (this.getArenaState() == ArenaState.STARTING && !getStartedIngameCountdown()) {
 						// cancel starting
 						this.setArenaState(ArenaState.JOIN);
-						Util.updateSign(plugin, this);
+						Util.updateSign(this.plugin, this);
 						try {
 							Bukkit.getScheduler().cancelTask(currenttaskid);
 						} catch (Exception e) {
@@ -579,7 +611,7 @@ public class Arena {
 						}
 						for (String p_ : this.getAllPlayers()) {
 							if (Validator.isPlayerOnline(p_)) {
-								Util.sendMessage(plugin, Bukkit.getPlayer(p_), pli.getMessagesConfig().cancelled_starting);
+								Util.sendMessage(this.plugin, Bukkit.getPlayer(p_), pli.getMessagesConfig().cancelled_starting);
 							}
 						}
 						return;
@@ -601,8 +633,8 @@ public class Arena {
 		}
 		if (p.isDead()) {
 			System.out.println(p.getName() + " unexpectedly appeared dead! Sending respawn packet.");
-			Effects.playRespawn(p, plugin);
-			Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+			Effects.playRespawn(p, this.plugin);
+			Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
 				public void run() {
 					leavePlayerRaw(playername, fullLeave);
 				}
@@ -619,25 +651,25 @@ public class Arena {
 			if (plugin.getConfig().getBoolean("config.reset_inventory_when_players_leave_server")) {
 				for (ItemStack i : ap.getInventory()) {
 					if (i != null) {
-						plugin.getConfig().set("temp.left_players." + playername + ".items." + Integer.toString((int) Math.round(Math.random() * 10000)) + i.getType().toString(), i);
+						this.plugin.getConfig().set("temp.left_players." + playername + ".items." + Integer.toString((int) Math.round(Math.random() * 10000)) + i.getType().toString(), i);
 					}
 				}
 			}
-			plugin.saveConfig();
+			this.plugin.saveConfig();
 
 			try {
-				if (pli.global_lost.containsKey(playername)) {
-					pli.getSpectatorManager().showSpectator(p);
-					pli.global_lost.remove(playername);
+				if (this.pli.global_lost.containsKey(playername)) {
+					this.pli.getSpectatorManager().showSpectator(p);
+					this.pli.global_lost.remove(playername);
 				} else {
-					pli.getSpectatorManager().showSpectators(p);
+					this.pli.getSpectatorManager().showSpectators(p);
 				}
-				if (pli.global_arcade_spectator.containsKey(playername)) {
-					pli.global_arcade_spectator.remove(playername);
+				if (this.pli.global_arcade_spectator.containsKey(playername)) {
+					this.pli.global_arcade_spectator.remove(playername);
 				}
 				if (p != null) {
 					p.removePotionEffect(PotionEffectType.JUMP);
-					Util.teleportPlayerFixed(p, this.mainlobby);
+					Util.teleportPlayerFixed(p, this.mainLobby);
 					p.setFireTicks(0);
 					p.setFlying(false);
 					if (!p.isOp()) {
@@ -656,10 +688,10 @@ public class Arena {
 					pli.getSpectatorManager().setSpectate(p, false);
 					pli.getStatsInstance().updateSQLKillsDeathsAfter(p, this);
 				}
-				if (pli.getClassesHandler().lasticonm.containsKey(p.getName())) {
+				if (this.pli.getClassesHandler().lasticonm.containsKey(p.getName())) {
 					IconMenu iconm = pli.getClassesHandler().lasticonm.get(p.getName());
 					iconm.destroy();
-					pli.getClassesHandler().lasticonm.remove(p.getName());
+					this.pli.getClassesHandler().lasticonm.remove(p.getName());
 				}
 			} catch (Exception e) {
 				System.out.println("Failed to log out player out of arena. " + e.getMessage());
@@ -689,15 +721,15 @@ public class Arena {
 		}
 
 		// pli.global_players.remove(playername);
-		if (pli.global_arcade_spectator.containsKey(playername)) {
-			pli.global_arcade_spectator.remove(playername);
+		if (this.pli.global_arcade_spectator.containsKey(playername)) {
+			this.pli.global_arcade_spectator.remove(playername);
 		}
 
-		if (pli.getPClasses().containsKey(playername)) {
-			pli.getPClasses().remove(playername);
+		if (this.pli.getPClasses().containsKey(playername)) {
+			this.pli.getPClasses().remove(playername);
 		}
 
-		Util.updateSign(plugin, this);
+		Util.updateSign(this.plugin, this);
 
 		Bukkit.getScheduler().runTaskLater(this.getPlugin(), new Runnable() {
 			public void run() {
@@ -707,7 +739,7 @@ public class Arena {
 					}
 				} catch (Exception e) {
 					System.out.println("Failed playing hologram: " + e.getMessage());
-					if (MinigamesAPI.getAPI().debug) {
+					if (MinigamesAPI.debug) {
 						e.printStackTrace();
 					}
 				}
@@ -723,14 +755,14 @@ public class Arena {
 		final String arenaname = this.getInternalName();
 		final Arena a = this;
 		final boolean started_ = started;
-		Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+		Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
 			public void run() {
 				if (p != null) {
 					if (ai == null || a.isArcadeMain()) {
-						if (a.mainlobby != null) {
-							Util.teleportPlayerFixed(p, a.mainlobby);
-						} else if (a.waitinglobby != null) {
-							Util.teleportPlayerFixed(p, a.waitinglobby);
+						if (a.getMainLobby() != null) {
+							Util.teleportPlayerFixed(p, a.getMainLobby());
+						} else if (a.getWaitingLobby() != null) {
+							Util.teleportPlayerFixed(p, a.getWaitingLobby());
 						}
 					}
 					p.setFireTicks(0);
@@ -748,7 +780,7 @@ public class Arena {
 					if (started_) {
 						pli.getStatsInstance().updateSQLKillsDeathsAfter(p, a);
 						if (!ap.isNoReward()) {
-							pli.getRewardsInstance().giveWinReward(playername, a, temp_players, global_coin_multiplier);
+							pli.getRewardsInstance().giveWinReward(playername, a, tempPlayers, globalCoinMultiplier);
 						} else {
 							ap.setNoReward(false);
 						}
@@ -871,16 +903,16 @@ public class Arena {
 		try {
 			Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 				public void run() {
-					if (specspawn != null) {
-						Util.teleportPlayerFixed(p, specspawn);
+					if (specSpawn != null) {
+						Util.teleportPlayerFixed(p, specSpawn);
 					} else {
 						Util.teleportPlayerFixed(p, temp.clone().add(0D, 30D, 0D));
 					}
 				}
 			}, 2L);
 		} catch (Exception e) {
-			if (specspawn != null) {
-				Util.teleportPlayerFixed(p, specspawn);
+			if (specSpawn != null) {
+				Util.teleportPlayerFixed(p, specSpawn);
 			} else {
 				Util.teleportPlayerFixed(p, temp.clone().add(0D, 30D, 0D));
 			}
@@ -994,7 +1026,7 @@ public class Arena {
 		}
 		currentingamecount = pli.ingame_countdown;
 		if (tp) {
-			pspawnloc = Util.teleportAllPlayers(currentarena.getArena().getAllPlayers(), currentarena.getArena().spawns);
+			this.setPlayerSpawnLoc(Util.teleportAllPlayers(currentarena.getArena().getAllPlayers(), currentarena.getArena().spawns));
 		}
 		boolean clearinv = plugin.getConfig().getBoolean("config.countdowns.clearinv_while_ingamecountdown");
 		for (String p_ : currentarena.getArena().getAllPlayers()) {
@@ -1013,7 +1045,7 @@ public class Arena {
 				pli.scoreboardManager.updateScoreboard(plugin, a);
 			}
 		}, 20L);
-		startedIngameCountdown = true;
+		setStartedIngameCountdown(true);
 		if (!plugin.getConfig().getBoolean("config.countdowns.ingame_countdown_enabled")) {
 			startRaw(a);
 			return;
@@ -1058,11 +1090,11 @@ public class Arena {
 
 		for (final String p_ : this.getAllPlayers()) {
 			if (pli.getShopHandler().hasItemBought(p_, "coin_boost2")) {
-				global_coin_multiplier = 2;
+				globalCoinMultiplier = 2;
 				break;
 			}
 			if (pli.getShopHandler().hasItemBought(p_, "coin_boost3")) {
-				global_coin_multiplier = 3;
+				globalCoinMultiplier = 3;
 				break;
 			}
 		}
@@ -1070,7 +1102,7 @@ public class Arena {
 
 	public void startRaw(final Arena a) {
 		currentarena.getArena().setArenaState(ArenaState.INGAME);
-		startedIngameCountdown = false;
+		setStartedIngameCountdown(false);
 		Util.updateSign(plugin, a);
 		Bukkit.getServer().getPluginManager().callEvent(new ArenaStartEvent(plugin, this));
 		boolean send_game_started_msg = plugin.getConfig().getBoolean("config.send_game_started_msg");
@@ -1119,7 +1151,7 @@ public class Arena {
 		}
 
 		// Maximum game time:
-		maximum_game_time = Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+		this.setMaximumGameTime(Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 			public void run() {
 				for (String p_ : a.getAllPlayers()) {
 					if (Validator.isPlayerValid(plugin, p_, a)) {
@@ -1132,7 +1164,7 @@ public class Arena {
 					}
 				}, 5 * 20L);
 			}
-		}, 20L * 60L * (long) plugin.getConfig().getDouble("config.defaults.default_max_game_time_in_minutes") - 5 * 20L);
+		}, 20L * 60L * (long) plugin.getConfig().getDouble("config.defaults.default_max_game_time_in_minutes") - 5 * 20L));
 	}
 
 	/**
@@ -1142,7 +1174,7 @@ public class Arena {
 		System.out.println(this.getInternalName() + " started.");
 	}
 
-	boolean temp_delay_stopped = false;
+	boolean tempDelayStopped = false;
 
 	/**
 	 * Stops the arena and teleports all players to the mainlobby
@@ -1150,15 +1182,15 @@ public class Arena {
 	public void stop() {
 		Bukkit.getServer().getPluginManager().callEvent(new ArenaStopEvent(plugin, this));
 		final Arena a = this;
-		if (maximum_game_time != null) {
-			maximum_game_time.cancel();
+		if (this.getMaximumGameTime() != null) {
+			this.getMaximumGameTime().cancel();
 		}
-		temp_players = new ArrayList<String>(players);
-		if (!temp_delay_stopped) {
+		this.setTempPlayers(new ArrayList<String>(players));
+		if (!tempDelayStopped) {
 			if (plugin.getConfig().getBoolean("config.delay.enabled")) {
 				Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
 					public void run() {
-						temp_delay_stopped = true;
+						tempDelayStopped = true;
 						a.stop();
 					}
 				}, plugin.getConfig().getInt("config.delay.amount_seconds") * 20L);
@@ -1172,10 +1204,10 @@ public class Arena {
 				return;
 			}
 		}
-		temp_delay_stopped = false;
+		tempDelayStopped = false;
 
 		try {
-			Bukkit.getScheduler().cancelTask(currenttaskid);
+			Bukkit.getScheduler().cancelTask(this.currenttaskid);
 		} catch (Exception e) {
 
 		}
@@ -1203,7 +1235,7 @@ public class Arena {
 		}
 
 		try {
-			for (ItemStack item : global_drops) {
+			for (ItemStack item : globalDrops) {
 				if (item != null) {
 					item.setType(Material.AIR);
 				}
@@ -1229,11 +1261,11 @@ public class Arena {
 		}, 10L);
 
 		started = false;
-		startedIngameCountdown = false;
+		setStartedIngameCountdown(false);
 
-		temp_countdown = true;
-		skip_join_lobby = false;
-		currentspawn = 0;
+		this.tempCountdown = true;
+		this.skipJoinLobby = false;
+		this.currentspawn = 0;
 
 		try {
 			pli.scoreboardManager.clearScoreboard(this.getInternalName());
@@ -1331,12 +1363,12 @@ public class Arena {
 	 *            The player that got eliminated
 	 */
 	public void onEliminated(String playername) {
-		if (lastdamager.containsKey(playername)) {
-			Player killer = Bukkit.getPlayer(lastdamager.get(playername));
+		if (getLastdamager().containsKey(playername)) {
+			Player killer = Bukkit.getPlayer(getLastdamager().get(playername));
 			if (killer != null) {
 				pli.getStatsInstance().addDeath(playername);
-				this.temp_kill_count.put(killer.getName(), this.temp_kill_count.containsKey(killer.getName()) ? this.temp_kill_count.get(killer.getName()) + 1 : 1);
-				this.temp_death_count.put(playername, this.temp_death_count.containsKey(playername) ? this.temp_death_count.get(playername) + 1 : 1);
+				this.getTempKillCount().put(killer.getName(), this.getTempKillCount().containsKey(killer.getName()) ? this.getTempKillCount().get(killer.getName()) + 1 : 1);
+				this.getTempDeathCount().put(playername, this.getTempDeathCount().containsKey(playername) ? this.getTempDeathCount().get(playername) + 1 : 1);
 				pli.getRewardsInstance().giveKillReward(killer.getName());
 				Util.sendMessage(plugin, killer, MinigamesAPI.getAPI().getPluginInstance(plugin).getMessagesConfig().you_got_a_kill.replaceAll("<player>", playername));
 				for (String p_ : this.getAllPlayers()) {
@@ -1347,7 +1379,7 @@ public class Arena {
 					}
 				}
 			}
-			lastdamager.remove(playername);
+			getLastdamager().remove(playername);
 		} else {
 			pli.getStatsInstance().addDeath(playername);
 		}
@@ -1385,6 +1417,14 @@ public class Arena {
 		return Integer.toString(alive) + "/" + Integer.toString(getAllPlayers().size());
 	}
 
+	public ArrayList<String> getTempPlayers() {
+		return tempPlayers;
+	}
+
+	public void setTempPlayers(ArrayList<String> tempPlayers) {
+		this.tempPlayers = tempPlayers;
+	}
+
 	public int getPlayerAlive() {
 		int alive = 0;
 		for (String p_ : getAllPlayers()) {
@@ -1398,11 +1438,11 @@ public class Arena {
 	}
 
 	public Location getWaitingLobbyTemp() {
-		return this.waitinglobby;
+		return this.waitingLobby;
 	}
 
 	public Location getMainLobbyTemp() {
-		return this.mainlobby;
+		return this.mainLobby;
 	}
 
 	public ArcadeInstance getArcadeInstance() {
@@ -1418,7 +1458,15 @@ public class Arena {
 	}
 
 	public HashMap<String, Location> getPSpawnLocs() {
-		return pspawnloc;
+		return pSpawnLoc;
+	}
+
+	public BukkitTask getMaximumGameTime() {
+		return maximumGameTime;
+	}
+
+	public void setMaximumGameTime(BukkitTask maximumGameTime) {
+		this.maximumGameTime = maximumGameTime;
 	}
 
 	public JavaPlugin getPlugin() {
@@ -1438,11 +1486,59 @@ public class Arena {
 	}
 
 	public boolean getIngameCountdownStarted() {
-		return this.startedIngameCountdown;
+		return this.getStartedIngameCountdown();
 	}
 
 	public boolean isSuccessfullyInit() {
 		return isSuccessfullyInitialized;
+	}
+
+	public boolean getStartedIngameCountdown() {
+		return startedIngameCountdown;
+	}
+
+	public void setStartedIngameCountdown(boolean startedIngameCountdown) {
+		this.startedIngameCountdown = startedIngameCountdown;
+	}
+
+	public boolean getSkipJoinLobby() {
+		return skipJoinLobby;
+	}
+
+	public void setSkipJoinLobby(boolean skipJoinLobby) {
+		this.skipJoinLobby = skipJoinLobby;
+	}
+
+	public ArrayList<ItemStack> getGlobalDrops() {
+		return globalDrops;
+	}
+
+	public void setGlobalDrops(ArrayList<ItemStack> globalDrops) {
+		this.globalDrops = globalDrops;
+	}
+
+	public HashMap<String, String> getLastdamager() {
+		return lastdamager;
+	}
+
+	public void setLastdamager(HashMap<String, String> lastdamager) {
+		this.lastdamager = lastdamager;
+	}
+
+	public HashMap<String, Integer> getTempKillCount() {
+		return tempKillCount;
+	}
+
+	public void setTempKillCount(HashMap<String, Integer> tempKillCount) {
+		this.tempKillCount = tempKillCount;
+	}
+
+	public HashMap<String, Integer> getTempDeathCount() {
+		return tempDeathCount;
+	}
+
+	public void setTempDeathCount(HashMap<String, Integer> tempDeathCount) {
+		this.tempDeathCount = tempDeathCount;
 	}
 
 }

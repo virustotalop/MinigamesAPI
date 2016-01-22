@@ -66,13 +66,13 @@ import com.comze_instancelabs.minigamesapi.util.Validator;
 public class ArenaListener implements Listener {
 
 	private JavaPlugin plugin;
-	private PluginInstance pli;
+	private static PluginInstance pli;
 	private String minigame = "minigame";
 
 	private ArrayList<String> cmds = new ArrayList<String>();
-	private String leave_cmd = "/leave";
+	private static String leave_cmd = "/leave";
 
-	public int loseY = 4;
+	private static int loseY = 4;
 
 	public ArenaListener(JavaPlugin plugin, PluginInstance pinstance, String minigame) {
 		this.plugin = plugin;
@@ -152,7 +152,7 @@ public class ArenaListener implements Listener {
 						}
 					} else if (a.getArenaState() == ArenaState.STARTING || a.getArenaState() == ArenaState.JOIN) {
 						if (!a.isArcadeMain()) {
-							if (!a.startedIngameCountdown) {
+							if (!a.getStartedIngameCountdown()) {
 								if (p.getLocation().getBlockY() < 0) {
 									try {
 										Util.teleportPlayerFixed(p, a.getWaitingLobbyTemp());
@@ -160,7 +160,7 @@ public class ArenaListener implements Listener {
 										System.out.println("Waiting lobby for arena " + a.getInternalName() + " missing, please fix by setting it. " + e.getMessage());
 									}
 								}
-								if (a.getLobbyBoundaries() != null && !a.skip_join_lobby) {
+								if (a.getLobbyBoundaries() != null && !a.getSkipJoinLobby()) {
 									if (!a.getLobbyBoundaries().containsLocWithoutY(p.getLocation())) {
 										Util.pushBack(a.getWaitingLobbyTemp(), p);
 									}
@@ -231,14 +231,14 @@ public class ArenaListener implements Listener {
 			final Player p = event.getEntity();
 
 			final Arena arena = pli.global_players.get(p.getName());
-			if (arena.getArenaState() == ArenaState.JOIN || (arena.getArenaState() == ArenaState.STARTING && !arena.startedIngameCountdown)) {
+			if (arena.getArenaState() == ArenaState.JOIN || (arena.getArenaState() == ArenaState.STARTING && !arena.getStartedIngameCountdown())) {
 				if (arena.isArcadeMain()) {
 					Util.teleportPlayerFixed(p, arena.getWaitingLobbyTemp());
 				}
 				return;
 			}
 
-			arena.global_drops.addAll(event.getDrops());
+			arena.getGlobalDrops().addAll(event.getDrops());
 
 			arena.spectate(p.getName());
 
@@ -391,7 +391,7 @@ public class ArenaListener implements Listener {
 					}
 					Arena a = (Arena) pli.global_players.get(p.getName());
 					if (a.getArenaState() == ArenaState.INGAME) {
-						a.lastdamager.put(p.getName(), attacker.getName());
+						a.getLastdamager().put(p.getName(), attacker.getName());
 						if (pli.damage_identifier_effects) {
 							ChatColor c = ChatColor.YELLOW;
 							if (event.getDamage() >= 5D) {
