@@ -67,33 +67,33 @@ public class AchievementsConfig {
 	}
 
 	public FileConfiguration getConfig() {
-		if (arenaConfig == null) {
+		if (this.arenaConfig == null) {
 			reloadConfig();
 		}
-		return arenaConfig;
+		return this.arenaConfig;
 	}
 
 	public void saveConfig() {
-		if (arenaConfig == null || arenaFile == null) {
+		if (this.arenaConfig == null ||this.arenaFile == null) {
 			return;
 		}
 		try {
-			getConfig().save(arenaFile);
+			getConfig().save(this.arenaFile);
 		} catch (IOException ex) {
 
 		}
 	}
 
 	public void reloadConfig() {
-		if (arenaFile == null) {
-			arenaFile = new File(plugin.getDataFolder(), "achievements.yml");
+		if (this.arenaFile == null) {
+			this.arenaFile = new File(plugin.getDataFolder(), "achievements.yml");
 		}
-		arenaConfig = YamlConfiguration.loadConfiguration(arenaFile);
+		this.arenaConfig = YamlConfiguration.loadConfiguration(arenaFile);
 
-		InputStream defConfigStream = plugin.getResource("achievements.yml");
+		InputStream defConfigStream = this.plugin.getResource("achievements.yml");
 		if (defConfigStream != null) {
 			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-			arenaConfig.setDefaults(defConfig);
+			this.arenaConfig.setDefaults(defConfig);
 		}
 	}
 

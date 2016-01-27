@@ -67,33 +67,33 @@ public class ShopConfig {
 	}
 
 	public FileConfiguration getConfig() {
-		if (shopConfig == null) {
+		if (this.shopConfig == null) {
 			reloadConfig();
 		}
-		return shopConfig;
+		return this.shopConfig;
 	}
 
 	public void saveConfig() {
-		if (shopConfig == null || shopFile == null) {
+		if (this.shopConfig == null || this.shopFile == null) {
 			return;
 		}
 		try {
-			getConfig().save(shopFile);
+			getConfig().save(this.shopFile);
 		} catch (IOException ex) {
 
 		}
 	}
 
 	public void reloadConfig() {
-		if (shopFile == null) {
-			shopFile = new File(plugin.getDataFolder(), "shop.yml");
+		if (this.shopFile == null) {
+			this.shopFile = new File(this.plugin.getDataFolder(), "shop.yml");
 		}
-		shopConfig = YamlConfiguration.loadConfiguration(shopFile);
+		this.shopConfig = YamlConfiguration.loadConfiguration(this.shopFile);
 
-		InputStream defConfigStream = plugin.getResource("shop.yml");
+		InputStream defConfigStream = this.plugin.getResource("shop.yml");
 		if (defConfigStream != null) {
 			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-			shopConfig.setDefaults(defConfig);
+			this.shopConfig.setDefaults(defConfig);
 		}
 	}
 

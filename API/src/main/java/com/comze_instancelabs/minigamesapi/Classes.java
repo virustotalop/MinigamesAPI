@@ -27,9 +27,9 @@ import com.shampaggon.crackshot.CSUtility;
 
 public class Classes {
 
-	JavaPlugin plugin;
-	PluginInstance pli;
-	public HashMap<String, IconMenu> lasticonm = new HashMap<String, IconMenu>();
+	private JavaPlugin plugin;
+	private PluginInstance pli;
+	private HashMap<String, IconMenu> lasticonm = new HashMap<String, IconMenu>();
 
 	public Classes(JavaPlugin plugin) {
 		this.plugin = plugin;
@@ -49,15 +49,15 @@ public class Classes {
 			return;
 		}
 		Player player = Bukkit.getPlayerExact(p);
-		if (lasticonm.containsKey(p)) {
-			iconm = lasticonm.get(p);
+		if (getLasticonm().containsKey(p)) {
+			iconm = getLasticonm().get(p);
 		} else {
-			iconm = new IconMenu(pli.getMessagesConfig().classes_item, (9 * plugin.getConfig().getInt("config.GUI.classes_gui_rows") > mincount - 1) ? 9 * plugin.getConfig().getInt("config.GUI.classes_gui_rows") : Math.round(mincount / 9) * 9 + 9, new IconMenu.OptionClickEventHandler() {
+			iconm = new IconMenu(this.pli.getMessagesConfig().classes_item, (9 * plugin.getConfig().getInt("config.GUI.classes_gui_rows") > mincount - 1) ? 9 * plugin.getConfig().getInt("config.GUI.classes_gui_rows") : Math.round(mincount / 9) * 9 + 9, new IconMenu.OptionClickEventHandler() {
 				@Override
 				public void onOptionClick(IconMenu.OptionClickEvent event) {
 					if (event.getPlayer().getName().equalsIgnoreCase(p)) {
-						if (pli.globalPlayers.containsKey(p)) {
-							if (pli.getArenas().contains(pli.globalPlayers.get(p))) {
+						if (pli.getGlobalPlayers().containsKey(p)) {
+							if (pli.getArenas().contains(pli.getGlobalPlayers().get(p))) {
 								String d = event.getName();
 								Player p = event.getPlayer();
 								if (pli.getAClasses().containsKey(d)) {
@@ -71,17 +71,17 @@ public class Classes {
 			}, plugin);
 
 			int c = 0;
-			for (String ac : pli.getAClasses().keySet()) {
-				AClass ac_ = pli.getAClasses().get(ac);
+			for (String ac : this.pli.getAClasses().keySet()) {
+				AClass ac_ = this.pli.getAClasses().get(ac);
 				if (ac_.isEnabled()) {
-					if (!pli.show_classes_without_usage_permission) {
+					if (!this.pli.isShowClassesWithoutUsagePermission()) {
 						if (!kitPlayerHasPermission(ac_.getInternalName(), player)) {
 							continue;
 						}
 					}
 					int slot = c;
-					if (pli.getClassesConfig().getConfig().isSet("config.kits." + ac_.getInternalName() + ".slot")) {
-						slot = pli.getClassesConfig().getConfig().getInt("config.kits." + ac_.getInternalName() + ".slot");
+					if (this.pli.getClassesConfig().getConfig().isSet("config.kits." + ac_.getInternalName() + ".slot")) {
+						slot = this.pli.getClassesConfig().getConfig().getInt("config.kits." + ac_.getInternalName() + ".slot");
 						if (slot < 0 || slot > iconm.getSize() - 1) {
 							slot = c;
 						}
@@ -93,15 +93,15 @@ public class Classes {
 		}
 
 		iconm.open(player);
-		lasticonm.put(p, iconm);
+		getLasticonm().put(p, iconm);
 	}
 
 	public void getClass(String player) {
-		if (!pli.getPClasses().containsKey(player)) {
+		if (!this.pli.getPClasses().containsKey(player)) {
 			ArenaLogger.debug(player + " didn't select any kit and the auto_add_default_kit option might be turned off, thus he won't get any starting items.");
 			return;
 		}
-		AClass c = pli.getPClasses().get(player);
+		AClass c = this.pli.getPClasses().get(player);
 		final Player p = Bukkit.getServer().getPlayer(player);
 		Util.clearInv(p);
 		ArrayList<ItemStack> items = new ArrayList<ItemStack>(Arrays.asList(c.getItems()));
@@ -227,13 +227,13 @@ public class Classes {
 	 * @param player
 	 */
 	public void setClass(String internalname, String player, boolean money) {
-		for (String c : pli.getAClasses().keySet()) {
+		for (String c : this.pli.getAClasses().keySet()) {
 			if (c.toLowerCase().equalsIgnoreCase(internalname.toLowerCase())) {
 				internalname = c;
 			}
 		}
 		if (!kitPlayerHasPermission(internalname, Bukkit.getPlayer(player))) {
-			Bukkit.getPlayer(player).sendMessage(pli.getMessagesConfig().no_perm);
+			Bukkit.getPlayer(player).sendMessage(this.pli.getMessagesConfig().noPermission);
 			return;
 		}
 		boolean continue_ = true;
@@ -243,13 +243,13 @@ public class Classes {
 			}
 		}
 		if (continue_) {
-			pli.setPClass(player, this.getClassByInternalname(internalname));
-			Bukkit.getPlayer(player).sendMessage(pli.getMessagesConfig().set_kit.replaceAll("<kit>", ChatColor.translateAlternateColorCodes('&', getClassByInternalname(internalname).getName())));
+			this.pli.setPClass(player, this.getClassByInternalname(internalname));
+			Bukkit.getPlayer(player).sendMessage(this.pli.getMessagesConfig().set_kit.replaceAll("<kit>", ChatColor.translateAlternateColorCodes('&', getClassByInternalname(internalname).getName())));
 		}
 	}
 
 	public String getInternalNameByName(String name) {
-		for (AClass ac : pli.getAClasses().values()) {
+		for (AClass ac : this.pli.getAClasses().values()) {
 			if (ac.getName().equalsIgnoreCase(name)) {
 				return ac.getInternalName();
 			}
@@ -267,18 +267,18 @@ public class Classes {
 	}
 
 	public boolean hasClass(String player) {
-		return pli.getPClasses().containsKey(player);
+		return this.pli.getPClasses().containsKey(player);
 	}
 
 	public String getSelectedClass(String player) {
 		if (hasClass(player)) {
-			return pli.getPClasses().get(player).getInternalName();
+			return this.pli.getPClasses().get(player).getInternalName();
 		}
 		return "default";
 	}
 
 	public void loadClasses() {
-		Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+		Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
 			public void run() {
 				FileConfiguration config = pli.getClassesConfig().getConfig();
 				if (config.isSet("config.kits")) {
@@ -336,7 +336,7 @@ public class Classes {
 	 * @return
 	 */
 	public boolean kitRequiresMoney(String kit) {
-		return pli.getClassesConfig().getConfig().getBoolean("config.kits." + kit + ".requires_money");
+		return this.pli.getClassesConfig().getConfig().getBoolean("config.kits." + kit + ".requires_money");
 	}
 
 	/**
@@ -350,7 +350,7 @@ public class Classes {
 	 */
 	public boolean kitTakeMoney(Player p, String kit) {
 		// Credits
-		if (plugin.getConfig().getBoolean("config.use_credits_instead_of_money_for_kits")) {
+		if (this.plugin.getConfig().getBoolean("config.use_credits_instead_of_money_for_kits")) {
 			String uuid = p.getUniqueId().toString();
 			int points = 0;
 			if (!MinigamesAPI.getAPI().statsglobal.getConfig().isSet("players." + uuid + ".points")) {
@@ -360,7 +360,7 @@ public class Classes {
 			} else {
 				points = MinigamesAPI.getAPI().statsglobal.getConfig().getInt("players." + uuid + ".points");
 			}
-			if (plugin.getConfig().getBoolean("config.buy_classes_forever")) {
+			if (this.plugin.getConfig().getBoolean("config.buy_classes_forever")) {
 				ClassesConfig cl = pli.getClassesConfig();
 				if (!cl.getConfig().isSet("players.bought_kits." + p.getName() + "." + kit)) {
 					int money = pli.getClassesConfig().getConfig().getInt("config.kits." + kit + ".money_amount");
@@ -383,14 +383,14 @@ public class Classes {
 						return false;
 					}
 				}
-				ClassesConfig config = pli.getClassesConfig();
+				ClassesConfig config = this.pli.getClassesConfig();
 				int money = config.getConfig().getInt("config.kits." + kit + ".money_amount");
 				if (points >= money) {
 					MinigamesAPI.getAPI().statsglobal.getConfig().set("players." + uuid + ".points", points - money);
 					MinigamesAPI.getAPI().statsglobal.saveConfig();
-					p.sendMessage(pli.getMessagesConfig().successfully_bought_kit.replaceAll("<kit>", ChatColor.translateAlternateColorCodes('&', getClassByInternalname(kit).getName())).replaceAll("<money>", Integer.toString(money)));
+					p.sendMessage(this.pli.getMessagesConfig().successfully_bought_kit.replaceAll("<kit>", ChatColor.translateAlternateColorCodes('&', getClassByInternalname(kit).getName())).replaceAll("<money>", Integer.toString(money)));
 				} else {
-					p.sendMessage(pli.getMessagesConfig().not_enough_money);
+					p.sendMessage(this.pli.getMessagesConfig().not_enough_money);
 					return false;
 				}
 			}
@@ -398,26 +398,26 @@ public class Classes {
 		}
 
 		// Money (economy)
-		if (!MinigamesAPI.getAPI().economy) {
-			plugin.getLogger().warning("Economy is turned OFF. You can turn it on in the config.");
+		if (!MinigamesAPI.economy) {
+			this.plugin.getLogger().warning("Economy is turned OFF. You can turn it on in the config.");
 			return false;
 		}
 		if (MinigamesAPI.economy) {
-			if (plugin.getConfig().getBoolean("config.buy_classes_forever")) {
-				ClassesConfig cl = pli.getClassesConfig();
+			if (this.plugin.getConfig().getBoolean("config.buy_classes_forever")) {
+				ClassesConfig cl = this.pli.getClassesConfig();
 				if (!cl.getConfig().isSet("players.bought_kits." + p.getName() + "." + kit)) {
-					int money = pli.getClassesConfig().getConfig().getInt("config.kits." + kit + ".money_amount");
-					if (MinigamesAPI.getAPI().econ.getBalance(p.getName()) >= money) {
-						EconomyResponse r = MinigamesAPI.getAPI().econ.withdrawPlayer(p.getName(), money);
+					int money = this.pli.getClassesConfig().getConfig().getInt("config.kits." + kit + ".money_amount");
+					if (MinigamesAPI.econ.getBalance(p.getName()) >= money) {
+						EconomyResponse r = MinigamesAPI.econ.withdrawPlayer(p.getName(), money);
 						if (!r.transactionSuccess()) {
 							p.sendMessage(String.format("An error occured: %s", r.errorMessage));
 							return false;
 						}
 						cl.getConfig().set("players.bought_kits." + p.getName() + "." + kit, true);
 						cl.saveConfig();
-						p.sendMessage(pli.getMessagesConfig().successfully_bought_kit.replaceAll("<kit>", ChatColor.translateAlternateColorCodes('&', getClassByInternalname(kit).getName())).replaceAll("<money>", Integer.toString(money)));
+						p.sendMessage(this.pli.getMessagesConfig().successfully_bought_kit.replaceAll("<kit>", ChatColor.translateAlternateColorCodes('&', getClassByInternalname(kit).getName())).replaceAll("<money>", Integer.toString(money)));
 					} else {
-						p.sendMessage(pli.getMessagesConfig().not_enough_money);
+						p.sendMessage(this.pli.getMessagesConfig().not_enough_money);
 						return false;
 					}
 				} else {
@@ -429,20 +429,20 @@ public class Classes {
 						return false;
 					}
 					if (kitRequiresMoney(kit)) {
-						Util.sendMessage(plugin, p, pli.getMessagesConfig().kit_warning);
+						Util.sendMessage(this.plugin, p, this.pli.getMessagesConfig().kit_warning);
 					}
 				}
-				ClassesConfig config = pli.getClassesConfig();
+				ClassesConfig config = this.pli.getClassesConfig();
 				int money = config.getConfig().getInt("config.kits." + kit + ".money_amount");
-				if (MinigamesAPI.getAPI().econ.getBalance(p.getName()) >= money) {
-					EconomyResponse r = MinigamesAPI.getAPI().econ.withdrawPlayer(p.getName(), money);
+				if (MinigamesAPI.econ.getBalance(p.getName()) >= money) {
+					EconomyResponse r = MinigamesAPI.econ.withdrawPlayer(p.getName(), money);
 					if (!r.transactionSuccess()) {
 						p.sendMessage(String.format("An error occured: %s", r.errorMessage));
 						return false;
 					}
-					p.sendMessage(pli.getMessagesConfig().successfully_bought_kit.replaceAll("<kit>", ChatColor.translateAlternateColorCodes('&', getClassByInternalname(kit).getName())).replaceAll("<money>", Integer.toString(money)));
+					p.sendMessage(this.pli.getMessagesConfig().successfully_bought_kit.replaceAll("<kit>", ChatColor.translateAlternateColorCodes('&', getClassByInternalname(kit).getName())).replaceAll("<money>", Integer.toString(money)));
 				} else {
-					p.sendMessage(pli.getMessagesConfig().not_enough_money);
+					p.sendMessage(this.pli.getMessagesConfig().not_enough_money);
 					return false;
 				}
 			}
@@ -454,7 +454,7 @@ public class Classes {
 	}
 
 	public boolean kitPlayerHasPermission(String kit, Player p) {
-		if (!pli.getClassesConfig().getConfig().getBoolean("config.kits." + kit + ".requires_permission")) {
+		if (!this.pli.getClassesConfig().getConfig().getBoolean("config.kits." + kit + ".requires_permission")) {
 			return true;
 		} else {
 			if (p.hasPermission(pli.getClassesConfig().getConfig().getString("config.kits." + kit + ".permission_node"))) {
@@ -463,6 +463,14 @@ public class Classes {
 				return false;
 			}
 		}
+	}
+
+	public HashMap<String, IconMenu> getLasticonm() {
+		return lasticonm;
+	}
+
+	public void setLasticonm(HashMap<String, IconMenu> lasticonm) {
+		this.lasticonm = lasticonm;
 	}
 
 }

@@ -38,14 +38,18 @@ public class Guns {
 	// that gives us 4*4*3 = 48 levels
 
 	// how much more the next level of an attribute will cost
-	public double level_multiplier = 3D;
+	public double levelMultiplier = 3D;
 
 	// attribute base costs
-	public int speed_cost = 40;
-	public int durability_cost = 30;
-	public int shoot_amount_cost = 70;
-	public int knockback_multiplier_cost = 100;
+	public int speedCost = 40;
+	public int durabilityCost = 30;
+	public int shootAmountCost = 70;
+	public int knockbackMultiplierCost = 100;
 
+	
+	/* Needs to be refactored, will probably break if any of the plugins use guns.
+	 */
+	
 	public HashMap<String, IconMenu> lastmainiconm = new HashMap<String, IconMenu>();
 	public HashMap<String, IconMenu> lastmainediticonm = new HashMap<String, IconMenu>();
 	public HashMap<String, IconMenu> lastupgradeiconm = new HashMap<String, IconMenu>();
@@ -62,7 +66,7 @@ public class Guns {
 	public void openGUI(String p) {
 		final int credits = MinigamesAPI.getAPI().getPluginInstance(plugin).getStatsInstance().getPoints(p);
 		IconMenu iconm;
-		if (lastmainiconm.containsKey(p)) {
+		if (this.lastmainiconm.containsKey(p)) {
 			iconm = lastmainiconm.get(p);
 		} else {
 			iconm = new IconMenu("Gun Upgrades (Credits: " + credits + ")", 36, new IconMenu.OptionClickEventHandler() {
@@ -91,7 +95,7 @@ public class Guns {
 							double cost = 0.0D;
 							if (d.startsWith("Speed")) {
 								int i = pattributes[0];
-								cost = Math.pow(level_multiplier, i) * speed_cost;
+								cost = Math.pow(levelMultiplier, i) * speedCost;
 								if (i < 3 && credits >= cost) {
 									openUpgradeGUI(p.getName(), gun, "speed", pattributes[0] + 1, cost);
 									done = true;
@@ -99,21 +103,21 @@ public class Guns {
 								}
 							} else if (d.startsWith("Durability")) {
 								int i = pattributes[1];
-								cost = Math.pow(level_multiplier, i) * durability_cost;
+								cost = Math.pow(levelMultiplier, i) * durabilityCost;
 								if (i < 3 && credits >= cost) {
 									openUpgradeGUI(p.getName(), gun, "durability", pattributes[1] + 1, cost);
 									done = true;
 								}
 							} else if (d.startsWith("Shoot")) {
 								int i = pattributes[2];
-								cost = Math.pow(level_multiplier, i) * shoot_amount_cost;
+								cost = Math.pow(levelMultiplier, i) * shootAmountCost;
 								if (i < 3 && credits >= cost) {
 									openUpgradeGUI(p.getName(), gun, "shoot", pattributes[2] + 1, cost);
 									done = true;
 								}
 							} else if (d.startsWith("Knockback")) {
 								int i = pattributes[3];
-								cost = Math.pow(level_multiplier, i) * knockback_multiplier_cost;
+								cost = Math.pow(levelMultiplier, i) * knockbackMultiplierCost;
 								if (i < 3 && credits >= cost) {
 									openUpgradeGUI(p.getName(), gun, "knockback", pattributes[3] + 1, cost);
 									done = true;
@@ -127,14 +131,14 @@ public class Guns {
 					event.setWillClose(false);
 				}
 			}, plugin);
-			lastmainiconm.put(p, iconm);
+			this.lastmainiconm.put(p, iconm);
 		}
 
 		int c = 0;
 		for (String ac : MinigamesAPI.getAPI().getPluginInstance(plugin).getAllGuns().keySet()) {
-			Gun ac_ = MinigamesAPI.getAPI().getPluginInstance(plugin).getAllGuns().get(ac);
-			int[] pattributes = getPlayerGunAttributeLevels(plugin, p, ac_);
-			iconm.setOption(c, ac_.icon.get(0), ac, MinigamesAPI.getAPI().getPluginInstance(plugin).getGunsConfig().getConfig().getString("config.guns." + ac + ".lore"));
+			Gun theGun = MinigamesAPI.getAPI().getPluginInstance(plugin).getAllGuns().get(ac);
+			int[] pattributes = getPlayerGunAttributeLevels(plugin, p, theGun);
+			iconm.setOption(c, theGun.icon.get(0), ac, MinigamesAPI.getAPI().getPluginInstance(plugin).getGunsConfig().getConfig().getString("config.guns." + ac + ".lore"));
 			iconm.setOption(c + 2, new ItemStack(Material.SUGAR), "Speed Lv " + ChatColor.DARK_RED + pattributes[0], ac + " Speed Upgrade");
 			iconm.setOption(c + 3, new ItemStack(Material.DIAMOND), "Durability Lv " + ChatColor.DARK_RED + pattributes[1], ac + " Durability Upgrade");
 			iconm.setOption(c + 4, new ItemStack(Material.EGG), "Shoot Lv " + ChatColor.DARK_RED + pattributes[2], ac + " Shoot amount Upgrade");
@@ -154,14 +158,14 @@ public class Guns {
 		ret[2] = config.isSet(path + "shoot") ? config.getInt(path + "shoot") : 0;
 		ret[3] = config.isSet(path + "knockback") ? config.getInt(path + "knockback") : 0;
 		HashMap<Gun, int[]> t;
-		if (pgunattributes.containsKey(p)) {
-			t = pgunattributes.get(p);
+		if (this.pgunattributes.containsKey(p)) {
+			t = this.pgunattributes.get(p);
 			t.put(g, ret);
 		} else {
 			t = new HashMap<Gun, int[]>();
 			t.put(g, ret);
 		}
-		pgunattributes.put(p, t);
+		this.pgunattributes.put(p, t);
 		return ret;
 	}
 
@@ -214,8 +218,8 @@ public class Guns {
 		guns = guns.substring(0, guns.length() - 2);
 		p_.sendMessage(MinigamesAPI.getAPI().getPluginInstance(plugin).getMessagesConfig().all_guns.replaceAll("<guns>", guns));
 		
-		if (lastmainediticonm.containsKey(p)) {
-			iconm = lastmainediticonm.get(p);
+		if (this.lastmainediticonm.containsKey(p)) {
+			iconm = this.lastmainediticonm.get(p);
 		} else {
 			iconm = new IconMenu("Set Main Gun", 9, new IconMenu.OptionClickEventHandler() {
 				@Override
@@ -231,7 +235,7 @@ public class Guns {
 					event.setWillClose(false);
 					event.setWillDestroy(true);
 				}
-			}, plugin);
+			}, this.plugin);
 		}
 
 		iconm.setOption(0, new ItemStack(Material.WOOL, 1, (short) 5), "Set " + g + " as Main/Secondary Gun", "");
@@ -242,7 +246,7 @@ public class Guns {
 
 	public void openUpgradeGUI(String p, final String g, final String attribute, final int level, final double cost) {
 		IconMenu iconm;
-		if (lastupgradeiconm.containsKey(p)) {
+		if (this.lastupgradeiconm.containsKey(p)) {
 			iconm = lastupgradeiconm.get(p);
 		} else {
 			iconm = new IconMenu("Upgrade?", 9, new IconMenu.OptionClickEventHandler() {
@@ -258,7 +262,7 @@ public class Guns {
 					event.setWillClose(false);
 					event.setWillDestroy(true);
 				}
-			}, plugin);
+			}, this.plugin);
 		}
 
 		iconm.setOption(0, new ItemStack(Material.WOOL, 1, (short) 5), "Buy " + attribute + " Upgrade", "");

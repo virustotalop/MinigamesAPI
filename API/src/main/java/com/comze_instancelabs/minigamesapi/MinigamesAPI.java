@@ -43,8 +43,8 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 	public boolean crackshot = false;
 	public static boolean debug = false;
 
-	public HashMap<String, Party> global_party = new HashMap<String, Party>();
-	public HashMap<String, ArrayList<Party>> global_party_invites = new HashMap<String, ArrayList<Party>>();
+	public HashMap<String, Party> globalParty = new HashMap<String, Party>();
+	public HashMap<String, ArrayList<Party>> globalPartyInvites = new HashMap<String, ArrayList<Party>>();
 
 	public HashMap<JavaPlugin, PluginInstance> pluginInstances = new HashMap<JavaPlugin, PluginInstance>();
 
@@ -71,18 +71,18 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 			}
 		}
 
-		getConfig().options().header("Want bugfree versions? Set this to true:");
-		getConfig().addDefault("config.auto_updating", true);
-		getConfig().addDefault("config.party_command_enabled", true);
-		getConfig().addDefault("config.debug", false);
+		this.getConfig().options().header("Want bugfree versions? Set this to true:");
+		this.getConfig().addDefault("config.auto_updating", true);
+		this.getConfig().addDefault("config.party_command_enabled", true);
+		this.getConfig().addDefault("config.debug", false);
 
-		getConfig().options().copyDefaults(true);
+		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
 
-		partymessages = new PartyMessagesConfig(this);
-		statsglobal = new StatsGlobalConfig(this, false);
+		this.partymessages = new PartyMessagesConfig(this);
+		this.statsglobal = new StatsGlobalConfig(this, false);
 
-		debug = getConfig().getBoolean("config.debug");
+		MinigamesAPI.debug = getConfig().getBoolean("config.debug");
 
 
 		if (getServer().getPluginManager().getPlugin("CrackShot") != null) {
@@ -173,11 +173,11 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 	}
 
 	public static void registerArenaSetup(JavaPlugin plugin_, ArenaSetup arenasetup) {
-		MinigamesAPI.getAPI().pluginInstances.get(plugin_).arenaSetup = arenasetup;
+		MinigamesAPI.getAPI().pluginInstances.get(plugin_).setArenaSetup(arenasetup);
 	}
 
 	public static void registerScoreboard(JavaPlugin plugin_, ArenaScoreboard board) {
-		MinigamesAPI.getAPI().pluginInstances.get(plugin_).scoreboardManager = board;
+		MinigamesAPI.getAPI().pluginInstances.get(plugin_).setScoreboardManager(board);
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 	// and add the loaded arenas w/ custom arena class into the PluginInstance
 	public static MinigamesAPI setupAPI(JavaPlugin plugin_, String minigame, Class<?> arenaclass) {
 		setupRaw(plugin_, minigame);
-		return instance;
+		return MinigamesAPI.instance;
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 	}
 
 	public static MinigamesAPI getAPI() {
-		return instance;
+		return MinigamesAPI.instance;
 	}
 
 	public static CommandHandler getCommandHandler() {
@@ -240,8 +240,8 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 		if (rsp == null) {
 			return false;
 		}
-		econ = rsp.getProvider();
-		return econ != null;
+		MinigamesAPI.econ = rsp.getProvider();
+		return MinigamesAPI.econ != null;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -257,11 +257,11 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 			Player p = (Player) sender;
 			for (PluginInstance pli : MinigamesAPI.getAPI().pluginInstances.values()) {
 				if (pli.containsGlobalPlayer(p.getName())) {
-					Arena a = pli.globalPlayers.get(p.getName());
+					Arena a = pli.getGlobalPlayers().get(p.getName());
 					System.out.println(a.getName());
 					if (a.getArenaState() == ArenaState.JOIN || (a.getArenaState() == ArenaState.STARTING && !a.getIngameCountdownStarted())) {
 						a.start(true);
-						sender.sendMessage(pli.getMessagesConfig().arena_action.replaceAll("<arena>", a.getDisplayName()).replaceAll("<action>", "started"));
+						sender.sendMessage(pli.getMessagesConfig().arenaAction.replaceAll("<arena>", a.getDisplayName()).replaceAll("<action>", "started"));
 						break;
 					}
 				}
@@ -272,7 +272,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 			if (!getConfig().getBoolean("config.party_command_enabled")) {
 				return true;
 			}
-			CommandHandler cmdhandler = this.getCommandHandler();
+			CommandHandler cmdhandler = MinigamesAPI.getCommandHandler();
 			if (!(sender instanceof Player)) {
 				sender.sendMessage("Please execute this command ingame.");
 				return true;
@@ -293,10 +293,10 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 				} else if (action.equalsIgnoreCase("leave")) {
 					cmdhandler.partyLeave(sender, args, "minigamesapi.party", "/" + cmd.getName(), action, this, p);
 				} else {
-					cmdhandler.sendPartyHelp("/" + cmd.getName(), sender);
+					CommandHandler.sendPartyHelp("/" + cmd.getName(), sender);
 				}
 			} else {
-				cmdhandler.sendPartyHelp("/" + cmd.getName(), sender);
+				CommandHandler.sendPartyHelp("/" + cmd.getName(), sender);
 			}
 		} else {
 			if (args.length > 0) {
@@ -306,13 +306,13 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 						sender.sendMessage("Debug info about " + p);
 						sender.sendMessage("~ global_players: ");
 						for (PluginInstance pli : pluginInstances.values()) {
-							if (pli.globalPlayers.containsKey(p)) {
+							if (pli.getGlobalPlayers().containsKey(p)) {
 								sender.sendMessage(" " + pli.getPlugin().getName());
 							}
 						}
 						sender.sendMessage("~ global_lost: ");
 						for (PluginInstance pli : pluginInstances.values()) {
-							if (pli.globalLost.containsKey(p)) {
+							if (pli.getGlobalLost().containsKey(p)) {
 								sender.sendMessage(" " + pli.getPlugin().getName());
 							}
 						}
@@ -324,8 +324,8 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 						}
 						sender.sendMessage("~ Arenas: ");
 						for (PluginInstance pli : pluginInstances.values()) {
-							if (pli.globalPlayers.containsKey(p)) {
-								sender.sendMessage(" " + pli.globalPlayers.get(p).getInternalName() + " - " + pli.globalPlayers.get(p).getArenaState());
+							if (pli.getGlobalPlayers().containsKey(p)) {
+								sender.sendMessage(" " + pli.getGlobalPlayers().get(p).getInternalName() + " - " + pli.getGlobalPlayers().get(p).getArenaState());
 							}
 						}
 					} else {
@@ -495,7 +495,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 					}
 				}
 				if (plugin != null) {
-					final Arena a = pluginInstances.get(plugin).getArenaByName(arena);
+					final Arena a = this.pluginInstances.get(plugin).getArenaByName(arena);
 					if (a != null) {
 						if (a.getArenaState() != ArenaState.INGAME && a.getArenaState() != ArenaState.RESTARTING && !a.containsPlayer(playername)) {
 							Bukkit.getScheduler().runTaskLater(this, new Runnable() {
@@ -526,7 +526,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 				System.out.println(plugin_ + " -> " + arena);
 				for (JavaPlugin pl : this.pluginInstances.keySet()) {
 					if (pl.getName().contains(plugin_)) {
-						Arena a = pluginInstances.get(pl).getArenaByName(arena);
+						Arena a = this.pluginInstances.get(pl).getArenaByName(arena);
 						if (a != null) {
 							BungeeUtil.sendSignUpdateRequest(pl, pl.getName(), a);
 						} else {
@@ -542,7 +542,7 @@ public class MinigamesAPI extends JavaPlugin implements PluginMessageListener {
 	}
 
 	public PluginInstance getPluginInstance(JavaPlugin plugin) {
-		return pluginInstances.get(plugin);
+		return this.pluginInstances.get(plugin);
 	}
 
 }

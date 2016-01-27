@@ -15,8 +15,8 @@ import com.comze_instancelabs.minigamesapi.util.IconMenu;
 
 public class ArenaAchievements {
 
-	JavaPlugin plugin;
-	PluginInstance pli;
+	private JavaPlugin plugin;
+	private PluginInstance pli;
 	public HashMap<String, IconMenu> lasticonm = new HashMap<String, IconMenu>();
 
 	public ArenaAchievements(PluginInstance pli, JavaPlugin plugin) {
@@ -31,7 +31,7 @@ public class ArenaAchievements {
 		if (this.lasticonm.containsKey(p)) {
 			iconm = this.lasticonm.get(p);
 		} else {
-			iconm = new IconMenu(MinigamesAPI.getAPI().getPluginInstance(plugin).getMessagesConfig().achievement_item, (9 > mincount - 1) ? 9 * 1 : Math.round(mincount / 9) * 9 + 9, new IconMenu.OptionClickEventHandler() {
+			iconm = new IconMenu(MinigamesAPI.getAPI().getPluginInstance(this.plugin).getMessagesConfig().achievement_item, (9 > mincount - 1) ? 9 * 1 : Math.round(mincount / 9) * 9 + 9, new IconMenu.OptionClickEventHandler() {
 				@Override
 				public void onOptionClick(IconMenu.OptionClickEvent event) {
 					event.setWillClose(true);
@@ -85,8 +85,8 @@ public class ArenaAchievements {
 					}
 				}
 				String base = "config.achievements." + achievement;
-				this.pli.getRewardsInstance().giveAchievementReward(playername, this.pli.getAchievementsConfig().getConfig().getBoolean(base + ".reward.economy_reward"), pli.getAchievementsConfig().getConfig().getBoolean(base + ".reward.command_reward"), pli.getAchievementsConfig().getConfig().getInt(base + ".reward.econ_reward_amount"), pli.getAchievementsConfig().getConfig().getString(base + ".reward.cmd"));
-				Bukkit.getPlayer(playername).sendMessage(pli.getMessagesConfig().youGotTheAchievement.replaceAll("<achievement>", ChatColor.translateAlternateColorCodes('&', pli.getAchievementsConfig().getConfig().getString("config.achievements." + achievement + ".name"))));
+				this.pli.getRewardsInstance().giveAchievementReward(playername, this.pli.getAchievementsConfig().getConfig().getBoolean(base + ".reward.economy_reward"), pli.getAchievementsConfig().getConfig().getBoolean(base + ".reward.command_reward"), this.pli.getAchievementsConfig().getConfig().getInt(base + ".reward.econ_reward_amount"), this.pli.getAchievementsConfig().getConfig().getString(base + ".reward.cmd"));
+				Bukkit.getPlayer(playername).sendMessage(this.pli.getMessagesConfig().youGotTheAchievement.replaceAll("<achievement>", ChatColor.translateAlternateColorCodes('&', this.pli.getAchievementsConfig().getConfig().getString("config.achievements." + achievement + ".name"))));
 
 				if (allDone) {
 					setAchievementDone(playername, "achievement_guy", sql);
@@ -105,12 +105,12 @@ public class ArenaAchievements {
 	}
 
 	public boolean isEnabled() {
-		return pli.getAchievementsConfig().getConfig().getBoolean("config.enabled");
+		return this.pli.getAchievementsConfig().getConfig().getBoolean("config.enabled");
 	}
 
 	public void setEnabled(boolean t) {
-		pli.getAchievementsConfig().getConfig().set("config.enabled", t);
-		pli.getAchievementsConfig().saveConfig();
+		this.pli.getAchievementsConfig().getConfig().set("config.enabled", t);
+		this.pli.getAchievementsConfig().saveConfig();
 	}
 
 }

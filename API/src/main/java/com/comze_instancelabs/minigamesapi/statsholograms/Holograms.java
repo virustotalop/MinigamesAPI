@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -18,8 +17,8 @@ import com.comze_instancelabs.minigamesapi.config.HologramsConfig;
 
 public class Holograms {
 
-	PluginInstance pli;
-	HashMap<Location, Hologram> holo = new HashMap<Location, Hologram>();
+	private PluginInstance pli;
+	private HashMap<Location, Hologram> holo = new HashMap<Location, Hologram>();
 
 	public Holograms(PluginInstance pli) {
 		this.pli = pli;
@@ -34,7 +33,7 @@ public class Holograms {
 				try {
 					Location l = new Location(Bukkit.getWorld(config.getConfig().getString(base + ".world")), config.getConfig().getDouble(base + ".location.x"), config.getConfig().getDouble(base + ".location.y"), config.getConfig().getDouble(base + ".location.z"), (float) config.getConfig().getDouble(base + ".location.yaw"), (float) config.getConfig().getDouble(base + ".location.pitch"));
 					if (l != null && l.getWorld() != null) {
-						holo.put(l, new Hologram(pli, l));
+						this.holo.put(l, new Hologram(pli, l));
 					}
 				} catch (Exception e) {
 					ArenaLogger.debug("Failed loading hologram as invalid location was found: " + e.getMessage());
@@ -60,7 +59,7 @@ public class Holograms {
 		config.getConfig().set(base + ".location.pitch", l.getPitch());
 		config.saveConfig();
 		Hologram h = new Hologram(pli, l);
-		holo.put(l, h);
+		this.holo.put(l, h);
 	}
 
 	public boolean removeHologram(Location ploc) {
@@ -72,7 +71,7 @@ public class Holograms {
 				if (l.distance(ploc) <= 2) {
 					config.getConfig().set("holograms." + str, null);
 					config.saveConfig();
-					if (holo.containsKey(l)) {
+					if (this.holo.containsKey(l)) {
 						for (Player p : Bukkit.getOnlinePlayers()) {
 							destroyHologram(p, holo.get(l));
 						}
@@ -92,7 +91,7 @@ public class Holograms {
 			playerConnection.setAccessible(true);
 			final Method sendPacket = playerConnection.getType().getMethod("sendPacket", Class.forName("net.minecraft.server." + version + ".Packet"));
 
-			final Constructor packetPlayOutEntityDestroyConstr = Class.forName("net.minecraft.server." + version + ".PacketPlayOutEntityDestroy").getConstructor(int[].class);
+			final Constructor<?> packetPlayOutEntityDestroyConstr = Class.forName("net.minecraft.server." + version + ".PacketPlayOutEntityDestroy").getConstructor(int[].class);
 
 			Object destroyPacket = packetPlayOutEntityDestroyConstr.newInstance((Object) convertIntegers(h.getIds()));
 			sendPacket.invoke(playerConnection.get(getPlayerHandle.invoke(p)), destroyPacket);

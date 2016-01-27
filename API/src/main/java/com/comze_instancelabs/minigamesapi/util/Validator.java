@@ -41,10 +41,10 @@ public class Validator {
 		if (!isPlayerOnline(player)) {
 			return false;
 		}
-		if (!MinigamesAPI.getAPI().getPluginInstance(plugin).globalPlayers.containsKey(player)) {
+		if (!MinigamesAPI.getAPI().getPluginInstance(plugin).getGlobalPlayers().containsKey(player)) {
 			return false;
 		}
-		if (!MinigamesAPI.getAPI().getPluginInstance(plugin).globalPlayers.get(player).getInternalName().equalsIgnoreCase(arena)) {
+		if (!MinigamesAPI.getAPI().getPluginInstance(plugin).getGlobalPlayers().get(player).getInternalName().equalsIgnoreCase(arena)) {
 			return false;
 		}
 		return true;

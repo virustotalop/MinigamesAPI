@@ -17,18 +17,18 @@ public class ArenaEvent extends Event {
 	}
 
 	public Arena getArena() {
-		return arena;
+		return this.arena;
 	}
 
 	public JavaPlugin getPlugin() {
-		return plugin;
+		return this.plugin;
 	}
 
 	public HandlerList getHandlers() {
-		return handlers;
+		return ArenaEvent.handlers;
 	}
 
 	public static HandlerList getHandlerList() {
-		return handlers;
+		return ArenaEvent.handlers;
 	}
 }

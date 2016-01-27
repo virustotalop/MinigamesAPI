@@ -31,8 +31,8 @@ public enum ParticleEffectNew {
 	private final Environment environment;
 
 	private int xStack, yStack, zStack;
-	private int _id = 1;
-	private int _data = 0;
+	private int id = 1;
+	private int data = 0;
 
 	/**
 	 * Each particle effect has a packet name, and an environment for developers
@@ -53,9 +53,9 @@ public enum ParticleEffectNew {
 	 * @param stackZAxis
 	 */
 	public void setStack(int stackXAxis, int stackYAxis, int stackZAxis) {
-		xStack = stackXAxis;
-		yStack = stackYAxis;
-		zStack = stackZAxis;
+		this.xStack = stackXAxis;
+		this.yStack = stackYAxis;
+		this.zStack = stackZAxis;
 	}
 
 	/**
@@ -64,7 +64,7 @@ public enum ParticleEffectNew {
 	 * @param id
 	 */
 	public void setId(int id) {
-		_id = id;
+		this.id = id;
 	}
 
 	/**
@@ -73,7 +73,7 @@ public enum ParticleEffectNew {
 	 * @param data
 	 */
 	public void setData(int data) {
-		_data = data;
+		this.data = data;
 	}
 
 	/**
@@ -190,7 +190,7 @@ public enum ParticleEffectNew {
 			Constructor packetConstr = Class.forName("net.minecraft.server." + MinigamesAPI.getAPI().version + "." + packetname).getConstructor();
 
 			Object packet = packetConstr.newInstance();
-			setValue(packet, "a", packetName.replace("%id%", "" + _id).replace("%data%", "" + _data));
+			setValue(packet, "a", packetName.replace("%id%", "" + this.id).replace("%data%", "" + this.data));
 			setValue(packet, "b", (float) location.getX());
 			setValue(packet, "c", (float) location.getY());
 			setValue(packet, "d", (float) location.getZ());

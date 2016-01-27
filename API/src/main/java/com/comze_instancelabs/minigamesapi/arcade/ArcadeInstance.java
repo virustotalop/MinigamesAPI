@@ -17,15 +17,15 @@ import com.comze_instancelabs.minigamesapi.util.Validator;
 
 public class ArcadeInstance {
 
-	public ArrayList<PluginInstance> minigames = new ArrayList<PluginInstance>();
-	int currentindex = 0;
-	public ArrayList<String> players = new ArrayList<String>();
-	Arena arena;
-	JavaPlugin plugin;
+	private ArrayList<PluginInstance> minigames = new ArrayList<PluginInstance>();
+	private int currentindex = 0;
+	private ArrayList<String> players = new ArrayList<String>();
+	private Arena arena;
+	private JavaPlugin plugin;
 
-	boolean in_a_game = false;
-	Arena currentarena = null;
-	boolean started;
+	private boolean inAGame = false;
+	private Arena currentArena = null;
+	private boolean started;
 
 	public ArcadeInstance(JavaPlugin plugin, ArrayList<PluginInstance> minigames, Arena arena) {
 		this.minigames = minigames;
@@ -35,34 +35,34 @@ public class ArcadeInstance {
 
 	// TODO max 16 players!
 	public void joinArcade(String playername) {
-		PluginInstance pli = MinigamesAPI.getAPI().getPluginInstance(plugin);
-		if (!players.contains(playername)) {
-			players.add(playername);
-			arena.addPlayer(playername);
+		//PluginInstance pli = MinigamesAPI.getAPI().getPluginInstance(plugin);
+		if (!this.players.contains(playername)) {
+			this.players.add(playername);
+			this.arena.addPlayer(playername);
 		}
 		Player p = Bukkit.getPlayer(playername);
 		if (p == null) {
 			return;
 		}
-		if (players.size() >= plugin.getConfig().getInt("config.arcade.min_players")) {
+		if (this.players.size() >= this.plugin.getConfig().getInt("config.arcade.min_players")) {
 			boolean msg = true;
-			if (!started) {
+			if (!this.started) {
 				startArcade();
 			} else {
-				if (currentindex < minigames.size()) {
-					if (in_a_game) {
-						if (currentarena != null) {
+				if (this.currentindex < this.minigames.size()) {
+					if (this.inAGame) {
+						if (this.currentArena != null) {
 							if (p != null) {
-								PluginInstance pli_ = minigames.get(currentindex);
-								System.out.println(pli_.getPlugin().getName() + " " + currentarena.getInternalName() + " " + p.getName());
-								if (currentarena.getArenaState() != ArenaState.INGAME && currentarena.getArenaState() != ArenaState.RESTARTING) {
-									currentarena.joinPlayerLobby(playername, this, false, true);
+								PluginInstance pli = minigames.get(currentindex);
+								System.out.println(pli.getPlugin().getName() + " " + currentArena.getInternalName() + " " + p.getName());
+								if (currentArena.getArenaState() != ArenaState.INGAME && currentArena.getArenaState() != ArenaState.RESTARTING) {
+									currentArena.joinPlayerLobby(playername, this, false, true);
 								} else {
 									msg = false;
-									currentarena.spectateArcade(playername);
+									this.currentArena.spectateArcade(playername);
 								}
 
-								pli_.scoreboardManager.updateScoreboard(pli_.getPlugin(), currentarena);
+								pli.getScoreboardManager().updateScoreboard(pli.getPlugin(), currentArena);
 							}
 						}
 					}
@@ -84,15 +84,15 @@ public class ArcadeInstance {
 
 	public void leaveArcade(final String playername, boolean endOfGame) {
 		final PluginInstance pli = MinigamesAPI.getAPI().getPluginInstance(plugin);
-		if (players.contains(playername)) {
-			players.remove(playername);
+		if (this.players.contains(playername)) {
+			this.players.remove(playername);
 		}
-		if (arena.containsPlayer(playername)) {
-			arena.removePlayer(playername);
+		if (this.arena.containsPlayer(playername)) {
+			this.arena.removePlayer(playername);
 		}
-		if (minigames.get(currentindex).getArenas().size() > 0) {
-			if (minigames.get(currentindex).getArenas().get(0).containsPlayer(playername)) {
-				minigames.get(currentindex).getArenas().get(0).leavePlayer(playername, false, false);
+		if (this.minigames.get(this.currentindex).getArenas().size() > 0) {
+			if (this.minigames.get(this.currentindex).getArenas().get(0).containsPlayer(playername)) {
+				this.minigames.get(this.currentindex).getArenas().get(0).leavePlayer(playername, false, false);
 			}
 		}
 		Bukkit.getScheduler().runTaskLater(MinigamesAPI.getAPI(), new Runnable() {
@@ -112,47 +112,47 @@ public class ArcadeInstance {
 
 		// This shouldn't be necessary anymore except for arcade spectators
 		if (pli.containsGlobalPlayer(playername)) {
-			pli.globalPlayers.remove(playername);
+			pli.getGlobalPlayers().remove(playername);
 		}
 		if (pli.containsGlobalLost(playername)) {
-			pli.globalLost.remove(playername);
+			pli.getGlobalLost().remove(playername);
 		}
-		if (currentarena != null) {
-			PluginInstance pli_ = MinigamesAPI.getAPI().pluginInstances.get(currentarena.getPlugin());
-			if (pli_ != null) {
-				if (pli_.containsGlobalPlayer(playername)) {
-					pli_.globalPlayers.remove(playername);
+		if (this.currentArena != null) {
+			PluginInstance currentPluginInstance = MinigamesAPI.getAPI().pluginInstances.get(this.currentArena.getPlugin());
+			if (currentPluginInstance != null) {
+				if (currentPluginInstance.containsGlobalPlayer(playername)) {
+					currentPluginInstance.getGlobalPlayers().remove(playername);
 				}
-				if (pli_.containsGlobalLost(playername)) {
-					pli_.globalLost.remove(playername);
+				if (currentPluginInstance.containsGlobalLost(playername)) {
+					currentPluginInstance.getGlobalLost().remove(playername);
 				}
 			}
 		}
 
-		Util.updateSign(plugin, arena);
+		Util.updateSign(this.plugin, this.arena);
 
 		if (endOfGame) {
-			if (players.size() < 2) {
+			if (this.players.size() < 2) {
 				stopArcade(false);
 			}
 		}
 	}
 
-	int currentlobbycount = 31;
-	int currenttaskid = 0;
+	private int currentlobbycount = 31;
+	private int currenttaskid = 0;
 
 	public void startArcade() {
-		if (started) {
+		if (this.started) {
 			return;
 		}
-		started = true;
-		Collections.shuffle(minigames);
+		this.started = true;
+		Collections.shuffle(this.minigames);
 
-		currentlobbycount = plugin.getConfig().getInt("config.arcade.lobby_countdown") + 1;
+		this.currentlobbycount = plugin.getConfig().getInt("config.arcade.lobby_countdown") + 1;
 		final ArcadeInstance ai = this;
 		final PluginInstance pli = MinigamesAPI.getAPI().getPluginInstance(plugin);
 
-		currenttaskid = Bukkit.getScheduler().runTaskTimer(MinigamesAPI.getAPI(), new Runnable() {
+		this.currenttaskid = Bukkit.getScheduler().runTaskTimer(MinigamesAPI.getAPI(), new Runnable() {
 			public void run() {
 				currentlobbycount--;
 				if (currentlobbycount == 60 || currentlobbycount == 30 || currentlobbycount == 15 || currentlobbycount == 10 || currentlobbycount < 6) {
@@ -177,18 +177,18 @@ public class ArcadeInstance {
 
 	public void stopArcade(boolean stopOfGame) {
 		try {
-			Bukkit.getScheduler().cancelTask(currenttaskid);
+			Bukkit.getScheduler().cancelTask(this.currenttaskid);
 		} catch (Exception e) {
 
 		}
-		final ArrayList<String> temp = new ArrayList<String>(players);
+		final ArrayList<String> temp = new ArrayList<String>(this.players);
 		for (String p_ : temp) {
 			this.leaveArcade(p_, false);
 		}
-		players.clear();
-		started = false;
-		in_a_game = false;
-		currentarena = null;
+		this.players.clear();
+		this.started = false;
+		this.inAGame = false;
+		this.currentArena = null;
 		this.currentindex = 0;
 
 		HashSet hs = new HashSet();
@@ -196,12 +196,12 @@ public class ArcadeInstance {
 		temp.clear();
 		temp.addAll(hs);
 		final ArcadeInstance ai = this;
-		if (stopOfGame && plugin.getConfig().getBoolean("config.arcade.infinite_mode.enabled")) {
+		if (stopOfGame && this.plugin.getConfig().getBoolean("config.arcade.infinite_mode.enabled")) {
 			if (temp.size() > 1) {
 				for (String p_ : temp) {
-					Util.sendMessage(plugin, Bukkit.getPlayer(p_), MinigamesAPI.getAPI().getPluginInstance(plugin).getMessagesConfig().arcade_new_round.replaceAll("<count>", Integer.toString(plugin.getConfig().getInt("config.arcade.infinite_mode.seconds_to_new_round"))));
+					Util.sendMessage(this.plugin, Bukkit.getPlayer(p_), MinigamesAPI.getAPI().getPluginInstance(plugin).getMessagesConfig().arcade_new_round.replaceAll("<count>", Integer.toString(plugin.getConfig().getInt("config.arcade.infinite_mode.seconds_to_new_round"))));
 				}
-				Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+				Bukkit.getScheduler().runTaskLater(this.plugin, new Runnable() {
 					public void run() {
 						for (String p_ : temp) {
 							if (!players.contains(p_)) {
@@ -210,7 +210,7 @@ public class ArcadeInstance {
 						}
 						ai.startArcade();
 					}
-				}, Math.max(40L, 20L * plugin.getConfig().getInt("config.arcade.infinite_mode.seconds_to_new_round")));
+				}, Math.max(40L, 20L * this.plugin.getConfig().getInt("config.arcade.infinite_mode.seconds_to_new_round")));
 			}
 		}
 	}
@@ -220,8 +220,8 @@ public class ArcadeInstance {
 	}
 
 	public void stopCurrentMinigame() {
-		if (currentindex < minigames.size()) {
-			PluginInstance mg = minigames.get(currentindex);
+		if (this.currentindex < this.minigames.size()) {
+			PluginInstance mg = this.minigames.get(currentindex);
 			if (mg.getArenas().size() > 0) {
 				if (mg.getPlugin().getConfig().getBoolean("config.arcade.arena_to_prefer.enabled")) {
 					String arenaname = mg.getPlugin().getConfig().getString("config.arcade.arena_to_prefer.arena");
@@ -230,7 +230,7 @@ public class ArcadeInstance {
 						a.stop();
 					}
 				} else {
-					minigames.get(currentindex).getArenas().get(0).stop();
+					this.minigames.get(this.currentindex).getArenas().get(0).stop();
 				}
 			}
 		}
@@ -241,12 +241,12 @@ public class ArcadeInstance {
 	}
 
 	public void nextMinigame(long delay) {
-		in_a_game = false;
+		this.inAGame = false;
 
-		if (currentindex < minigames.size() - 1) {
-			currentindex++;
+		if (this.currentindex < this.minigames.size() - 1) {
+			this.currentindex++;
 		} else {
-			arena.stop();
+			this.arena.stop();
 			// stopArcade();
 			return;
 		}
@@ -279,8 +279,8 @@ public class ArcadeInstance {
 						}
 					}
 					if (a != null) {
-						in_a_game = true;
-						currentarena = a;
+						inAGame = true;
+						currentArena = a;
 						PluginInstance pli = MinigamesAPI.getAPI().getPluginInstance(plugin);
 						for (String p_ : temp) {
 							if (Validator.isPlayerOnline(p_)) {
@@ -310,8 +310,8 @@ public class ArcadeInstance {
 			}
 		}
 		for (String r : rem) {
-			if (players.contains(r)) {
-				players.remove(r);
+			if (this.players.contains(r)) {
+				this.players.remove(r);
 			}
 		}
 	}

@@ -22,8 +22,8 @@ public class Shop {
 	// Allows buying extra stuff for the games like traits, coin boosters, extra weapons
 	// You can change whether the particular item is persistent or just for one game
 
-	JavaPlugin plugin;
-	PluginInstance pli;
+	private JavaPlugin plugin;
+	private PluginInstance pli;
 	public HashMap<String, IconMenu> lasticonm = new HashMap<String, IconMenu>();
 	public LinkedHashMap<String, ShopItem> shopitems = new LinkedHashMap<String, ShopItem>();
 
@@ -35,15 +35,15 @@ public class Shop {
 	public void openGUI(final String p) {
 		IconMenu iconm;
 		int mincount = pli.getAClasses().keySet().size();
-		if (lasticonm.containsKey(p)) {
+		if (this.lasticonm.containsKey(p)) {
 			iconm = lasticonm.get(p);
 		} else {
 			iconm = new IconMenu(pli.getMessagesConfig().shop_item, (9 * plugin.getConfig().getInt("config.GUI.shop_gui_rows") > mincount - 1) ? 9 * plugin.getConfig().getInt("config.GUI.shop_gui_rows") : Math.round(mincount / 9) * 9 + 9, new IconMenu.OptionClickEventHandler() {
 				@Override
 				public void onOptionClick(IconMenu.OptionClickEvent event) {
 					if (event.getPlayer().getName().equalsIgnoreCase(p)) {
-						if (pli.globalPlayers.containsKey(p)) {
-							if (pli.getArenas().contains(pli.globalPlayers.get(p))) {
+						if (pli.getGlobalPlayers().containsKey(p)) {
+							if (pli.getArenas().contains(pli.getGlobalPlayers().get(p))) {
 								String d = event.getName();
 								Player p = event.getPlayer();
 								buy(p, d);
@@ -52,15 +52,15 @@ public class Shop {
 					}
 					event.setWillClose(true);
 				}
-			}, plugin);
+			}, this.plugin);
 
-			ShopConfig shopConfig = pli.getShopConfig();
+			ShopConfig shopConfig = this.pli.getShopConfig();
 			int c = 0;
-			for (String ac : shopitems.keySet()) {
-				ShopItem ac_ = shopitems.get(ac);
+			for (String ac : this.shopitems.keySet()) {
+				ShopItem ac_ = this.shopitems.get(ac);
 				if (ac_.isEnabled()) {
 					int slot = c;
-					if (pli.getShopConfig().getConfig().isSet("config.shop_items." + ac_.getInternalName() + ".slot")) {
+					if (this.pli.getShopConfig().getConfig().isSet("config.shop_items." + ac_.getInternalName() + ".slot")) {
 						slot = pli.getShopConfig().getConfig().getInt("config.shop_items." + ac_.getInternalName() + ".slot");
 						if (slot < 0 || slot > iconm.getSize() - 1) {
 							slot = c;
@@ -77,7 +77,7 @@ public class Shop {
 		}
 
 		iconm.open(Bukkit.getPlayerExact(p));
-		lasticonm.put(p, iconm);
+		this.lasticonm.put(p, iconm);
 	}
 
 	public void loadShopItems() {
@@ -104,8 +104,8 @@ public class Shop {
 	 * @return
 	 */
 	public boolean buy(Player p, String item_displayname) {
-		for (String ac : shopitems.keySet()) {
-			ShopItem ac_ = shopitems.get(ac);
+		for (String ac : this.shopitems.keySet()) {
+			ShopItem ac_ = this.shopitems.get(ac);
 			if (ac_.getName().equalsIgnoreCase(ChatColor.stripColor(item_displayname))) {
 				takeMoney(p, ac_.getInternalName());
 				// true -> player has item already or just bought it successfully
@@ -116,8 +116,8 @@ public class Shop {
 	}
 
 	public boolean buyByInternalName(Player p, String item_name) {
-		for (String ac : shopitems.keySet()) {
-			ShopItem ac_ = shopitems.get(ac);
+		for (String ac : this.shopitems.keySet()) {
+			ShopItem ac_ = this.shopitems.get(ac);
 			if (ac_.getInternalName().equalsIgnoreCase(ChatColor.stripColor(item_name))) {
 				takeMoney(p, ac_.getInternalName());
 				// true -> player has item already or just bought it successfully
@@ -128,40 +128,40 @@ public class Shop {
 	}
 
 	public boolean hasItemBought(String p, String item) {
-		return pli.getShopConfig().getConfig().isSet("players.bought." + p + "." + item);
+		return this.pli.getShopConfig().getConfig().isSet("players.bought." + p + "." + item);
 	}
 
 	public boolean requiresMoney(String item) {
-		return pli.getShopConfig().getConfig().getBoolean("config.shop_items." + item + ".requires_money");
+		return this.pli.getShopConfig().getConfig().getBoolean("config.shop_items." + item + ".requires_money");
 	}
 
 	public boolean takeMoney(Player p, String item) {
-		if (!MinigamesAPI.getAPI().economy) {
-			plugin.getLogger().warning("Economy is turned OFF. Turn it ON in the config.");
+		if (!MinigamesAPI.economy) {
+			this.plugin.getLogger().warning("Economy is turned OFF. Turn it ON in the config.");
 			return false;
 		}
 		if (!requiresMoney(item)) {
 			return false;
 		}
 		if (MinigamesAPI.economy) {
-			ShopConfig shopConfig = pli.getShopConfig();
+			ShopConfig shopConfig = this.pli.getShopConfig();
 			if (!shopConfig.getConfig().isSet("players.bought." + p.getName() + "." + item)) {
 				int money = shopConfig.getConfig().getInt("config.shop_items." + item + ".money_amount");
-				if (MinigamesAPI.getAPI().econ.getBalance(p.getName()) >= money) {
-					EconomyResponse r = MinigamesAPI.getAPI().econ.withdrawPlayer(p.getName(), money);
+				if (MinigamesAPI.econ.getBalance(p.getName()) >= money) {
+					EconomyResponse r = MinigamesAPI.econ.withdrawPlayer(p.getName(), money);
 					if (!r.transactionSuccess()) {
 						p.sendMessage(String.format("An error occured: %s", r.errorMessage));
 						return false;
 					}
 					shopConfig.getConfig().set("players.bought." + p.getName() + "." + item, true);
 					shopConfig.saveConfig();
-					p.sendMessage(pli.getMessagesConfig().successfully_bought_shopitem.replaceAll("<shopitem>", shopitems.get(item).getName()).replaceAll("<money>", Integer.toString(money)));
+					p.sendMessage(this.pli.getMessagesConfig().successfully_bought_shopitem.replaceAll("<shopitem>", shopitems.get(item).getName()).replaceAll("<money>", Integer.toString(money)));
 				} else {
-					p.sendMessage(pli.getMessagesConfig().not_enough_money);
+					p.sendMessage(this.pli.getMessagesConfig().not_enough_money);
 					return false;
 				}
 			} else {
-				p.sendMessage(pli.getMessagesConfig().already_bought_shopitem.replaceAll("<shopitem>", shopitems.get(item).getName()));
+				p.sendMessage(this.pli.getMessagesConfig().already_bought_shopitem.replaceAll("<shopitem>", shopitems.get(item).getName()));
 				return true;
 			}
 			return true;
@@ -172,8 +172,8 @@ public class Shop {
 	}
 
 	public void giveShopItems(Player p) {
-		for (ShopItem ac : shopitems.values()) {
-			if (ac.usesItems(pli)) {
+		for (ShopItem ac : this.shopitems.values()) {
+			if (ac.usesItems(this.pli)) {
 				for (ItemStack i : ac.getItems()) {
 					p.getInventory().addItem(i);
 				}

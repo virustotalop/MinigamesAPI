@@ -27,9 +27,9 @@ import com.comze_instancelabs.minigamesapi.util.Validator;
 
 public class PluginInstance {
 
-	public HashMap<String, Arena> globalPlayers = new HashMap<String, Arena>();
-	public HashMap<String, Arena> globalLost = new HashMap<String, Arena>();
-	public HashMap<String, Arena> global_arcade_spectator = new HashMap<String, Arena>();
+	private HashMap<String, Arena> globalPlayers = new HashMap<String, Arena>();
+	private HashMap<String, Arena> globalLost = new HashMap<String, Arena>();
+	private HashMap<String, Arena> globalArcadeSpectator = new HashMap<String, Arena>();
 
 	private ArenaListener arenalistener = null;
 	private ArenasConfig arenasconfig = null;
@@ -53,28 +53,28 @@ public class PluginInstance {
 	private SpectatorManager spectatormanager = null;
 	private ArenaAchievements achievements = null;
 	private Holograms holograms = null;
-	private boolean achievement_gui_enabled = false;
+	private boolean achievementGuiEnabled = false;
 
-	public ArenaScoreboard scoreboardManager;
-	public ArenaLobbyScoreboard scoreboardLobbyManager;
-	public ArenaSetup arenaSetup = new ArenaSetup();
+	private  ArenaScoreboard scoreboardManager;
+	private  ArenaLobbyScoreboard scoreboardLobbyManager;
+	private  ArenaSetup arenaSetup = new ArenaSetup();
 
-	int lobby_countdown = 30;
-	int ingame_countdown = 10;
+	private int lobbyCountdown = 30;
+	private int ingameCountdown = 10;
 
-	boolean spectator_move_y_lock = true;
-	boolean use_xp_bar_level = true;
-	boolean blood_effects = true;
-	boolean deadInFakeBedEffects = true;
-	boolean spectatorMode1_8 = true;
-	boolean damage_identifier_effects = true;
-	public boolean color_background_wool_of_signs;
-	boolean last_man_standing = true;
-	boolean old_reset = false;
-	public boolean show_classes_without_usage_permission = true;
-	public boolean chat_enabled = true;
+	private boolean spectatorMoveYLocked = true;
+	private boolean useXpBarLevel = true;
+	private boolean bloodEffects = true;
+	private boolean deadInFakeBedEffects = true;
+	private boolean spectatorMode1_8 = true;
+	private boolean damageIdentifierEffects = true;
+	private boolean colorBackgroundWoolOfSigns;
+	private boolean lastManStanding = true;
+	private boolean oldReset = false;
+	private boolean showClassesWithoutUsagePermission = true;
+	private boolean chatEnabled = true;
 
-	public HashMap<String, ArrayList<String>> cached_sign_states = new HashMap<String, ArrayList<String>>();
+	public HashMap<String, ArrayList<String>> cachedSignStates = new HashMap<String, ArrayList<String>>();
 
 	public PluginInstance(JavaPlugin plugin, ArenasConfig arenasconfig, MessagesConfig messagesconfig, ClassesConfig classesconfig, StatsConfig statsconfig, ArrayList<Arena> arenas) {
 		this.arenasconfig = arenasconfig;
@@ -87,17 +87,17 @@ public class PluginInstance {
 		this.hologramsconfig = new HologramsConfig(plugin, false);
 		this.arenas = arenas;
 		this.plugin = plugin;
-		rew = new Rewards(plugin);
-		stats = new Stats(this, plugin);
-		sql = new MainSQL(plugin, true);
-		classes = new Classes(this, plugin);
-		shop = new Shop(this, plugin);
-		spectatormanager = new SpectatorManager(plugin);
-		achievements = new ArenaAchievements(this, plugin);
-		holograms = new Holograms(this);
-		scoreboardManager = new ArenaScoreboard(this, plugin);
-		scoreboardLobbyManager = new ArenaLobbyScoreboard(this, plugin);
-		reloadVariables();
+		this.rew = new Rewards(plugin);
+		this.stats = new Stats(this, plugin);
+		this.sql = new MainSQL(plugin, true);
+		this.classes = new Classes(this, plugin);
+		this.shop = new Shop(this, plugin);
+		this.spectatormanager = new SpectatorManager(plugin);
+		this.achievements = new ArenaAchievements(this, plugin);
+		this.holograms = new Holograms(this);
+		this.setScoreboardManager(new ArenaScoreboard(this, plugin));
+		this.setScoreboardLobbyManager(new ArenaLobbyScoreboard(this, plugin));
+		this.reloadVariables();
 	}
 
 	public PluginInstance(JavaPlugin plugin, ArenasConfig arenasconfig, MessagesConfig messagesconfig, ClassesConfig classesconfig, StatsConfig statsconfig) {
@@ -105,23 +105,23 @@ public class PluginInstance {
 	}
 
 	public void reloadVariables() {
-		lobby_countdown = plugin.getConfig().getInt("config.countdowns.lobby_countdown") + 1;
-		ingame_countdown = plugin.getConfig().getInt("config.countdowns.ingame_countdown") + 1;
-		spectator_move_y_lock = plugin.getConfig().getBoolean("config.spectator.spectator_move_y_lock");
-		use_xp_bar_level = plugin.getConfig().getBoolean("config.use_xp_bar_level");
-		blood_effects = plugin.getConfig().getBoolean("config.effects.blood");
-		damage_identifier_effects = plugin.getConfig().getBoolean("config.effects.damage_identifier_holograms");
-		deadInFakeBedEffects = plugin.getConfig().getBoolean("config.effects.dead_in_fake_bed");
-		color_background_wool_of_signs = plugin.getConfig().getBoolean("config.color_background_wool_of_signs");
-		spectatorMode1_8 = plugin.getConfig().getBoolean("config.effects.1_8_spectator_mode");
-		last_man_standing = plugin.getConfig().getBoolean("config.last_man_standing_wins");
-		old_reset = plugin.getConfig().getBoolean("config.use_old_reset_method");
-		show_classes_without_usage_permission = plugin.getConfig().getBoolean("config.show_classes_without_usage_permission");
-		chat_enabled = plugin.getConfig().getBoolean("config.chat_enabled");
+		this.lobbyCountdown = plugin.getConfig().getInt("config.countdowns.lobby_countdown") + 1;
+		this.ingameCountdown = plugin.getConfig().getInt("config.countdowns.ingame_countdown") + 1;
+		this.setSpectatorMoveYLocked(plugin.getConfig().getBoolean("config.spectator.spectator_move_y_lock"));
+		this.setUseXpBarLevel(plugin.getConfig().getBoolean("config.use_xp_bar_level"));
+		this.setBloodEffects(plugin.getConfig().getBoolean("config.effects.blood"));
+		this.setDamageIdentifierEffects(plugin.getConfig().getBoolean("config.effects.damage_identifier_holograms"));
+		this.setDeadInFakeBedEffects(plugin.getConfig().getBoolean("config.effects.dead_in_fake_bed"));
+		this.setColorBackgroundWoolOfSigns(plugin.getConfig().getBoolean("config.color_background_wool_of_signs"));
+		this.setSpectatorMode1_8(plugin.getConfig().getBoolean("config.effects.1_8_spectator_mode"));
+		this.setLastManStanding(plugin.getConfig().getBoolean("config.last_man_standing_wins"));
+		this.setOldReset(plugin.getConfig().getBoolean("config.use_old_reset_method"));
+		this.setShowClassesWithoutUsagePermission(plugin.getConfig().getBoolean("config.show_classes_without_usage_permission"));
+		this.setChatEnabled(plugin.getConfig().getBoolean("config.chat_enabled"));
 
 		// Cache sign configuration
 		for (String state : ArenaState.getAllStateNames()) {
-			this.cached_sign_states.put(state, new ArrayList<String>(Arrays.asList(this.messagesconfig.getConfig().getString("signs." + state.toLowerCase() + ".0"), this.messagesconfig.getConfig().getString("signs." + state.toLowerCase() + ".1"), this.messagesconfig.getConfig().getString("signs." + state.toLowerCase() + ".2"), this.messagesconfig.getConfig().getString("signs." + state.toLowerCase() + ".3"))));
+			this.cachedSignStates.put(state, new ArrayList<String>(Arrays.asList(this.messagesconfig.getConfig().getString("signs." + state.toLowerCase() + ".0"), this.messagesconfig.getConfig().getString("signs." + state.toLowerCase() + ".1"), this.messagesconfig.getConfig().getString("signs." + state.toLowerCase() + ".2"), this.messagesconfig.getConfig().getString("signs." + state.toLowerCase() + ".3"))));
 		}
 
 	}
@@ -155,31 +155,31 @@ public class PluginInstance {
 	}
 
 	public ArenasConfig getArenasConfig() {
-		return arenasconfig;
+		return this.arenasconfig;
 	}
 
 	public MessagesConfig getMessagesConfig() {
-		return messagesconfig;
+		return this.messagesconfig;
 	}
 
 	public ClassesConfig getClassesConfig() {
-		return classesconfig;
+		return this.classesconfig;
 	}
 
 	public StatsConfig getStatsConfig() {
-		return statsconfig;
+		return this.statsconfig;
 	}
 
 	public GunsConfig getGunsConfig() {
-		return gunsconfig;
+		return this.gunsconfig;
 	}
 
 	public AchievementsConfig getAchievementsConfig() {
-		return achievementsconfig;
+		return this.achievementsconfig;
 	}
 
 	public ShopConfig getShopConfig() {
-		return shopconfig;
+		return this.shopconfig;
 	}
 
 	public void setShopConfig(ShopConfig shopconfig) {
@@ -187,11 +187,11 @@ public class PluginInstance {
 	}
 
 	public HologramsConfig getHologramsConfig() {
-		return hologramsconfig;
+		return this.hologramsconfig;
 	}
 
 	public HashMap<String, Arena> getGlobalPlayers() {
-		return globalPlayers;
+		return this.globalPlayers;
 	}
 
 	public void setGlobalPlayers(HashMap<String, Arena> globalPlayers) {
@@ -199,19 +199,19 @@ public class PluginInstance {
 	}
 
 	public Rewards getRewardsInstance() {
-		return rew;
+		return this.rew;
 	}
 
 	public void setRewardsInstance(Rewards r) {
-		rew = r;
+		this.rew = r;
 	}
 
 	public MainSQL getSQLInstance() {
-		return sql;
+		return this.sql;
 	}
 
 	public Stats getStatsInstance() {
-		return stats;
+		return this.stats;
 	}
 
 	public ArenaListener getArenaListener() {
@@ -251,24 +251,24 @@ public class PluginInstance {
 	}
 
 	public int getIngameCountdown() {
-		return this.ingame_countdown;
+		return this.ingameCountdown;
 	}
 
 	public int getLobbyCountdown() {
-		return this.lobby_countdown;
+		return this.lobbyCountdown;
 	}
 
 	public ArrayList<Arena> getArenas() {
-		return arenas;
+		return this.arenas;
 	}
 
 	public void clearArenas() {
-		arenas.clear();
+		this.arenas.clear();
 	}
 
 	public ArrayList<Arena> addArena(Arena arena) {
-		arenas.add(arena);
-		return getArenas();
+		this.arenas.add(arena);
+		return this.getArenas();
 	}
 
 	public Arena getArenaByName(String arenaname) {
@@ -294,8 +294,8 @@ public class PluginInstance {
 	}
 
 	public boolean removeArena(Arena arena) {
-		if (arenas.contains(arena)) {
-			arenas.remove(arena);
+		if (this.arenas.contains(arena)) {
+			this.arenas.remove(arena);
 			return true;
 		}
 		return false;
@@ -306,32 +306,32 @@ public class PluginInstance {
 	}
 
 	public boolean isAchievementGuiEnabled() {
-		return achievement_gui_enabled;
+		return this.achievementGuiEnabled;
 	}
 
 	public void setAchievementGuiEnabled(boolean achievement_gui_enabled) {
-		this.achievement_gui_enabled = achievement_gui_enabled;
+		this.achievementGuiEnabled = achievement_gui_enabled;
 	}
 
 	public void reloadAllArenas() {
 		for (Arena a : this.getArenas()) {
 			if (a != null) {
 				String arenaname = a.getInternalName();
-				ArenaSetup s = this.arenaSetup;
-				a.init(Util.getSignLocationFromArena(plugin, arenaname), Util.getAllSpawns(plugin, arenaname), Util.getMainLobby(plugin), Util.getComponentForArena(plugin, arenaname, "lobby"), s.getPlayerCount(plugin, arenaname, true), s.getPlayerCount(plugin, arenaname, false), s.getArenaVIP(plugin, arenaname));
+				ArenaSetup s = this.getArenaSetup();
+				a.init(Util.getSignLocationFromArena(this.plugin, arenaname), Util.getAllSpawns(this.plugin, arenaname), Util.getMainLobby(this.plugin), Util.getComponentForArena(plugin, arenaname, "lobby"), s.getPlayerCount(plugin, arenaname, true), s.getPlayerCount(plugin, arenaname, false), s.getArenaVIP(plugin, arenaname));
 				if (a.isSuccessfullyInit()) {
-					Util.updateSign(plugin, a);
+					Util.updateSign(this.plugin, a);
 				}
 			}
 		}
 	}
 
 	public void reloadArena(String arenaname) {
-		if (Validator.isArenaValid(plugin, arenaname)) {
+		if (Validator.isArenaValid(this.plugin, arenaname)) {
 			Arena a = this.getArenaByName(arenaname);
 			if (a != null) {
-				ArenaSetup s = this.arenaSetup;
-				a.init(Util.getSignLocationFromArena(plugin, arenaname), Util.getAllSpawns(plugin, arenaname), Util.getMainLobby(plugin), Util.getComponentForArena(plugin, arenaname, "lobby"), s.getPlayerCount(plugin, arenaname, true), s.getPlayerCount(plugin, arenaname, false), s.getArenaVIP(plugin, arenaname));
+				ArenaSetup s = this.getArenaSetup();
+				a.init(Util.getSignLocationFromArena(this.plugin, arenaname), Util.getAllSpawns(this.plugin, arenaname), Util.getMainLobby(this.plugin), Util.getComponentForArena(plugin, arenaname, "lobby"), s.getPlayerCount(plugin, arenaname, true), s.getPlayerCount(plugin, arenaname, false), s.getArenaVIP(plugin, arenaname));
 			}
 		}
 	}
@@ -353,11 +353,131 @@ public class PluginInstance {
 	}
 
 	public HashMap<String, Arena> getGlobalLost() {
-		return globalLost;
+		return this.globalLost;
 	}
 
 	public void setGlobalLost(HashMap<String, Arena> globalLost) {
 		this.globalLost = globalLost;
+	}
+
+	public HashMap<String, Arena> getGlobalArcadeSpectator() {
+		return globalArcadeSpectator;
+	}
+
+	public void setGlobalArcadeSpectator(HashMap<String, Arena> globalArcadeSpectator) {
+		this.globalArcadeSpectator = globalArcadeSpectator;
+	}
+
+	public ArenaScoreboard getScoreboardManager() {
+		return this.scoreboardManager;
+	}
+
+	public void setScoreboardManager(ArenaScoreboard scoreboardManager) {
+		this.scoreboardManager = scoreboardManager;
+	}
+
+	public ArenaLobbyScoreboard getScoreboardLobbyManager() {
+		return this.scoreboardLobbyManager;
+	}
+
+	public void setScoreboardLobbyManager(ArenaLobbyScoreboard scoreboardLobbyManager) {
+		this.scoreboardLobbyManager = scoreboardLobbyManager;
+	}
+
+	public ArenaSetup getArenaSetup() {
+		return arenaSetup;
+	}
+
+	public void setArenaSetup(ArenaSetup arenaSetup) {
+		this.arenaSetup = arenaSetup;
+	}
+
+	public boolean isLastManStanding() {
+		return lastManStanding;
+	}
+
+	public void setLastManStanding(boolean lastManStanding) {
+		this.lastManStanding = lastManStanding;
+	}
+
+	public boolean isDeadInFakeBedEffects() {
+		return deadInFakeBedEffects;
+	}
+
+	public void setDeadInFakeBedEffects(boolean deadInFakeBedEffects) {
+		this.deadInFakeBedEffects = deadInFakeBedEffects;
+	}
+
+	public boolean isSpectatorMode1_8() {
+		return this.spectatorMode1_8;
+	}
+
+	public void setSpectatorMode1_8(boolean spectatorMode1_8) {
+		this.spectatorMode1_8 = spectatorMode1_8;
+	}
+
+	public boolean isUseXpBarLevel() {
+		return this.useXpBarLevel;
+	}
+
+	public void setUseXpBarLevel(boolean useXpBarLevel) {
+		this.useXpBarLevel = useXpBarLevel;
+	}
+
+	public boolean isOldReset() {
+		return oldReset;
+	}
+
+	public void setOldReset(boolean oldReset) {
+		this.oldReset = oldReset;
+	}
+
+	public boolean isChatEnabled() {
+		return chatEnabled;
+	}
+
+	public void setChatEnabled(boolean chatEnabled) {
+		this.chatEnabled = chatEnabled;
+	}
+
+	public boolean isDamageIdentifierEffects() {
+		return damageIdentifierEffects;
+	}
+
+	public void setDamageIdentifierEffects(boolean damageIdentifierEffects) {
+		this.damageIdentifierEffects = damageIdentifierEffects;
+	}
+
+	public boolean isBloodEffects() {
+		return bloodEffects;
+	}
+
+	public void setBloodEffects(boolean bloodEffects) {
+		this.bloodEffects = bloodEffects;
+	}
+
+	public boolean isSpectatorMoveYLocked() {
+		return spectatorMoveYLocked;
+	}
+
+	public void setSpectatorMoveYLocked(boolean spectatorMoveYLocked) {
+		this.spectatorMoveYLocked = spectatorMoveYLocked;
+	}
+
+	public boolean isShowClassesWithoutUsagePermission() {
+		return this.showClassesWithoutUsagePermission;
+	}
+
+	public void setShowClassesWithoutUsagePermission(boolean showClassesWithoutUsagePermission) {
+		this.showClassesWithoutUsagePermission = showClassesWithoutUsagePermission;
+	}
+
+	public boolean isColorBackgroundWoolOfSigns() {
+		return this.colorBackgroundWoolOfSigns;
+	}
+
+	public void setColorBackgroundWoolOfSigns(boolean colorBackgroundWoolOfSigns) {
+		this.colorBackgroundWoolOfSigns = colorBackgroundWoolOfSigns;
 	}
 
 }

@@ -17,6 +17,7 @@ import org.bukkit.World;
  * @author Pandemoneus - https://github.com/Pandemoneus
  */
 public final class Cuboid {
+	
 	private final Location highPoints;
 	private final Location lowPoints;
 
@@ -39,11 +40,11 @@ public final class Cuboid {
 			final int highy = Math.max(startLoc.getBlockY(), endLoc.getBlockY());
 			final int highz = Math.max(startLoc.getBlockZ(), endLoc.getBlockZ());
 
-			highPoints = new Location(startLoc.getWorld(), highx, highy, highz);
-			lowPoints = new Location(startLoc.getWorld(), lowx, lowy, lowz);
+			this.highPoints = new Location(startLoc.getWorld(), highx, highy, highz);
+			this.lowPoints = new Location(startLoc.getWorld(), lowx, lowy, lowz);
 		} else {
-			highPoints = null;
-			lowPoints = null;
+			this.highPoints = null;
+			this.lowPoints = null;
 		}
 
 	}
@@ -67,33 +68,33 @@ public final class Cuboid {
 	 * @return true if the location is within this cuboid, otherwise false
 	 */
 	public boolean containsLoc(Location loc) {
-		if (loc == null || !loc.getWorld().equals(highPoints.getWorld())) {
+		if (loc == null || !loc.getWorld().equals(this.highPoints.getWorld())) {
 			return false;
 		}
 
-		return lowPoints.getBlockX() <= loc.getBlockX() && highPoints.getBlockX() >= loc.getBlockX() && lowPoints.getBlockZ() <= loc.getBlockZ() && highPoints.getBlockZ() >= loc.getBlockZ() && lowPoints.getBlockY() <= loc.getBlockY() && highPoints.getBlockY() >= loc.getBlockY();
+		return this.lowPoints.getBlockX() <= loc.getBlockX() && this.highPoints.getBlockX() >= loc.getBlockX() && this.lowPoints.getBlockZ() <= loc.getBlockZ() && this.highPoints.getBlockZ() >= loc.getBlockZ() && this.lowPoints.getBlockY() <= loc.getBlockY() && this.highPoints.getBlockY() >= loc.getBlockY();
 	}
 
 	public boolean containsLocWithoutY(Location loc) {
-		if (highPoints == null || lowPoints == null) {
+		if (this.highPoints == null || this.lowPoints == null) {
 			return false;
 		}
-		if (loc == null || !loc.getWorld().equals(highPoints.getWorld())) {
+		if (loc == null || !loc.getWorld().equals(this.highPoints.getWorld())) {
 			return false;
 		}
 
-		return lowPoints.getBlockX() <= loc.getBlockX() && highPoints.getBlockX() >= loc.getBlockX() && lowPoints.getBlockZ() <= loc.getBlockZ() && highPoints.getBlockZ() >= loc.getBlockZ();
+		return this.lowPoints.getBlockX() <= loc.getBlockX() && this.highPoints.getBlockX() >= loc.getBlockX() && this.lowPoints.getBlockZ() <= loc.getBlockZ() && this.highPoints.getBlockZ() >= loc.getBlockZ();
 	}
 
 	public boolean containsLocWithoutYD(Location loc) {
-		if (highPoints == null || lowPoints == null) {
+		if (this.highPoints == null || this.lowPoints == null) {
 			return false;
 		}
 		if (loc == null || !loc.getWorld().equals(highPoints.getWorld())) {
 			return false;
 		}
 
-		return lowPoints.getBlockX() <= loc.getBlockX() + 2 && highPoints.getBlockX() >= loc.getBlockX() - 2 && lowPoints.getBlockZ() <= loc.getBlockZ() + 2 && highPoints.getBlockZ() >= loc.getBlockZ() - 2;
+		return this.lowPoints.getBlockX() <= loc.getBlockX() + 2 && this.highPoints.getBlockX() >= loc.getBlockX() - 2 && this.lowPoints.getBlockZ() <= loc.getBlockZ() + 2 && this.highPoints.getBlockZ() >= loc.getBlockZ() - 2;
 	}
 
 	/**
@@ -114,12 +115,12 @@ public final class Cuboid {
 		final World world = getWorld();
 		final Random randomGenerator = new Random();
 
-		Location result = new Location(world, highPoints.getBlockX(), highPoints.getBlockY(), highPoints.getZ());
+		Location result = new Location(world, this.highPoints.getBlockX(), this.highPoints.getBlockY(), this.highPoints.getZ());
 
 		if (getSize() > 1) {
-			final double randomX = lowPoints.getBlockX() + randomGenerator.nextInt(getXSize());
-			final double randomY = lowPoints.getBlockY() + randomGenerator.nextInt(getYSize());
-			final double randomZ = lowPoints.getBlockZ() + randomGenerator.nextInt(getZSize());
+			final double randomX = this.lowPoints.getBlockX() + randomGenerator.nextInt(getXSize());
+			final double randomY = this.lowPoints.getBlockY() + randomGenerator.nextInt(getYSize());
+			final double randomZ = this.lowPoints.getBlockZ() + randomGenerator.nextInt(getZSize());
 
 			result = new Location(world, randomX, randomY, randomZ);
 		}
@@ -144,7 +145,7 @@ public final class Cuboid {
 	 * @return the x span of this cuboid
 	 */
 	public int getXSize() {
-		return (highPoints.getBlockX() - lowPoints.getBlockX()) + 1;
+		return (this.highPoints.getBlockX() - this.lowPoints.getBlockX()) + 1;
 	}
 
 	/**
@@ -153,7 +154,7 @@ public final class Cuboid {
 	 * @return the y span of this cuboid
 	 */
 	public int getYSize() {
-		return (highPoints.getBlockY() - lowPoints.getBlockY()) + 1;
+		return (this.highPoints.getBlockY() - this.lowPoints.getBlockY()) + 1;
 	}
 
 	/**
@@ -162,7 +163,7 @@ public final class Cuboid {
 	 * @return the z span of this cuboid
 	 */
 	public int getZSize() {
-		return (highPoints.getBlockZ() - lowPoints.getBlockZ()) + 1;
+		return (this.highPoints.getBlockZ() - this.lowPoints.getBlockZ()) + 1;
 	}
 
 	/**
@@ -171,7 +172,7 @@ public final class Cuboid {
 	 * @return the higher location of this cuboid
 	 */
 	public Location getHighLoc() {
-		return highPoints;
+		return this.highPoints;
 	}
 
 	/**
@@ -180,7 +181,7 @@ public final class Cuboid {
 	 * @return the lower location of this cuboid
 	 */
 	public Location getLowLoc() {
-		return lowPoints;
+		return this.lowPoints;
 	}
 
 	/**
@@ -189,7 +190,7 @@ public final class Cuboid {
 	 * @return the world this cuboid is in
 	 */
 	public World getWorld() {
-		return highPoints.getWorld();
+		return this.highPoints.getWorld();
 	}
 
 	/**
@@ -245,7 +246,19 @@ public final class Cuboid {
 	 */
 	@Override
 	public String toString() {
-		return new StringBuilder("(").append(lowPoints.getBlockX()).append(", ").append(lowPoints.getBlockY()).append(", ").append(lowPoints.getBlockZ()).append(") to (").append(highPoints.getBlockX()).append(", ").append(highPoints.getBlockY()).append(", ").append(highPoints.getBlockZ()).append(")").toString();
+		return new StringBuilder("(")
+		.append(this.lowPoints.getBlockX())
+		.append(", ")
+		.append(this.lowPoints.getBlockY())
+		.append(", ")
+		.append(this.lowPoints.getBlockZ())
+		.append(") to (")
+		.append(this.highPoints.getBlockX())
+		.append(", ")
+		.append(this.highPoints.getBlockY())
+		.append(", ")
+		.append(this.highPoints.getBlockZ())
+		.append(")").toString();
 	}
 
 	/**
@@ -254,6 +267,18 @@ public final class Cuboid {
 	 * @return a raw representation of this cuboid
 	 */
 	public String toRaw() {
-		return new StringBuilder(getWorld().getName()).append(",").append(lowPoints.getBlockX()).append(",").append(lowPoints.getBlockY()).append(",").append(lowPoints.getBlockZ()).append(",").append(highPoints.getBlockX()).append(",").append(highPoints.getBlockY()).append(",").append(highPoints.getBlockZ()).toString();
+		return new StringBuilder(getWorld().getName())
+		.append(",")
+		.append(this.lowPoints.getBlockX())
+		.append(",")
+		.append(this.lowPoints.getBlockY())
+		.append(",")
+		.append(this.lowPoints.getBlockZ())
+		.append(",")
+		.append(this.highPoints.getBlockX())
+		.append(",")
+		.append(this.highPoints.getBlockY())
+		.append(",")
+		.append(this.highPoints.getBlockZ()).toString();
 	}
 }

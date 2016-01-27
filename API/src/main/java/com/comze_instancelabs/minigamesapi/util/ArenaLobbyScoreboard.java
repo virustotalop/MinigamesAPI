@@ -18,24 +18,30 @@ import com.comze_instancelabs.minigamesapi.PluginInstance;
 
 public class ArenaLobbyScoreboard {
 
-	HashMap<String, Scoreboard> ascore = new HashMap<String, Scoreboard>();
-	HashMap<String, Objective> aobjective = new HashMap<String, Objective>();
+	
+	/* Should have just made a base scoreboard object and then extended and overrode methods
+	 * 
+	 * 
+	 */
+	
+	private HashMap<String, Scoreboard> ascore = new HashMap<String, Scoreboard>();
+	private HashMap<String, Objective> aobjective = new HashMap<String, Objective>();
 
-	int initialized = 0; // 0 = false; 1 = true;
-	boolean custom = false;
+	private int initialized = 0; // 0 = false; 1 = true;
+	private boolean custom = false;
 
-	PluginInstance pli;
+	private PluginInstance pli;
 
-	ArrayList<String> loaded_custom_strings = new ArrayList<String>();
+	private ArrayList<String> loadedCustomStrings = new ArrayList<String>();
 
 	public ArenaLobbyScoreboard(PluginInstance pli, JavaPlugin plugin) {
-		custom = plugin.getConfig().getBoolean("config.use_custom_scoreboard");
-		initialized = 1;
+		this.custom = plugin.getConfig().getBoolean("config.use_custom_scoreboard");
+		this.initialized = 1;
 		this.pli = pli;
 		if (pli.getMessagesConfig().getConfig().isSet("messages.custom_lobby_scoreboard.")) {
 			for (String configline : pli.getMessagesConfig().getConfig().getConfigurationSection("messages.custom_lobby_scoreboard.").getKeys(false)) {
 				String line = ChatColor.translateAlternateColorCodes('&', pli.getMessagesConfig().getConfig().getString("messages.custom_lobby_scoreboard." + configline));
-				loaded_custom_strings.add(line);
+				this.loadedCustomStrings.add(line);
 			}
 		}
 	}
@@ -45,8 +51,8 @@ public class ArenaLobbyScoreboard {
 			return;
 		}
 
-		if (pli == null) {
-			pli = MinigamesAPI.getAPI().getPluginInstance(plugin);
+		if (this.pli == null) {
+			this.pli = MinigamesAPI.getAPI().getPluginInstance(plugin);
 		}
 
 		Bukkit.getScheduler().runTask(MinigamesAPI.getAPI(), new Runnable() {
@@ -66,10 +72,10 @@ public class ArenaLobbyScoreboard {
 					}
 
 					try {
-						if (loaded_custom_strings.size() < 1) {
+						if (loadedCustomStrings.size() < 1) {
 							return;
 						}
-						for (String line : loaded_custom_strings) {
+						for (String line : loadedCustomStrings) {
 							String[] line_arr = line.split(":");
 							String line_ = line_arr[0];
 							String score_identifier = line_arr[line_arr.length - 1];

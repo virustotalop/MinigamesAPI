@@ -37,9 +37,9 @@ public class AClass {
 	}
 
 	public ItemStack[] getItems() {
-		ItemStack[] ret = new ItemStack[items.size()];
+		ItemStack[] ret = new ItemStack[this.items.size()];
 		int c = 0;
-		for (ItemStack f : items) {
+		for (ItemStack f : this.items) {
 			ret[c] = f;
 			c++;
 		}
@@ -59,6 +59,6 @@ public class AClass {
 	}
 
 	public boolean isEnabled() {
-		return enabled;
+		return this.enabled;
 	}
 }

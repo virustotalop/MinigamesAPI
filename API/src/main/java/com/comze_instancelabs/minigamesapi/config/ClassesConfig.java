@@ -33,33 +33,33 @@ public class ClassesConfig {
 	}
 
 	public FileConfiguration getConfig() {
-		if (classesConfig == null) {
+		if (this.classesConfig == null) {
 			reloadConfig();
 		}
-		return classesConfig;
+		return this.classesConfig;
 	}
 
 	public void saveConfig() {
-		if (classesConfig == null || classesFile == null) {
+		if (this.classesConfig == null || this.classesFile == null) {
 			return;
 		}
 		try {
-			getConfig().save(classesFile);
+			getConfig().save(this.classesFile);
 		} catch (IOException ex) {
 
 		}
 	}
 
 	public void reloadConfig() {
-		if (classesFile == null) {
-			classesFile = new File(plugin.getDataFolder(), "classes.yml");
+		if (this.classesFile == null) {
+			this.classesFile = new File(this.plugin.getDataFolder(), "classes.yml");
 		}
-		classesConfig = YamlConfiguration.loadConfiguration(classesFile);
+		this.classesConfig = YamlConfiguration.loadConfiguration(this.classesFile);
 
-		InputStream defConfigStream = plugin.getResource("classes.yml");
+		InputStream defConfigStream = this.plugin.getResource("classes.yml");
 		if (defConfigStream != null) {
 			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-			classesConfig.setDefaults(defConfig);
+			this.classesConfig.setDefaults(defConfig);
 		}
 	}
 

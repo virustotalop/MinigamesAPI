@@ -77,7 +77,7 @@ public class ArenaPlayer {
 	}
 
 	public Arena getCurrentArena() {
-		return currentArena;
+		return this.currentArena;
 	}
 
 	public void setCurrentArena(Arena currentArena) {
@@ -85,7 +85,7 @@ public class ArenaPlayer {
 	}
 
 	public AClass getCurrentClass() {
-		return currentClass;
+		return this.currentClass;
 	}
 
 	public void setCurrentClass(AClass currentClass) {

@@ -19,29 +19,29 @@ import com.comze_instancelabs.minigamesapi.PluginInstance;
 
 public class ArenaScoreboard {
 
-	HashMap<String, Scoreboard> ascore = new HashMap<String, Scoreboard>();
-	HashMap<String, Objective> aobjective = new HashMap<String, Objective>();
-	HashMap<String, Integer> currentscore = new HashMap<String, Integer>();
+	private HashMap<String, Scoreboard> arenaScore = new HashMap<String, Scoreboard>();
+	private HashMap<String, Objective> arenaObjective = new HashMap<String, Objective>();
+	private HashMap<String, Integer> currentScore = new HashMap<String, Integer>();
 
-	int initialized = 0; // 0 = false; 1 = true;
-	boolean custom = false;
+	private int initialized = 0; // 0 = false; 1 = true;
+	private boolean custom = false;
 
-	PluginInstance pli;
+	private PluginInstance pli;
 
-	ArrayList<String> loaded_custom_strings = new ArrayList<String>();
+	private ArrayList<String> loadedCustomStrings = new ArrayList<String>();
 
 	public ArenaScoreboard() {
 		//
 	}
 
 	public ArenaScoreboard(PluginInstance pli, JavaPlugin plugin) {
-		custom = plugin.getConfig().getBoolean("config.use_custom_scoreboard");
-		initialized = 1;
+		this.custom = plugin.getConfig().getBoolean("config.use_custom_scoreboard");
+		this.initialized = 1;
 		this.pli = pli;
 		if (pli.getMessagesConfig().getConfig().isSet("messages.custom_scoreboard.")) {
 			for (String configline : pli.getMessagesConfig().getConfig().getConfigurationSection("messages.custom_scoreboard.").getKeys(false)) {
 				String line = ChatColor.translateAlternateColorCodes('&', pli.getMessagesConfig().getConfig().getString("messages.custom_scoreboard." + configline));
-				loaded_custom_strings.add(line);
+				this.loadedCustomStrings.add(line);
 			}
 		}
 	}
@@ -51,12 +51,12 @@ public class ArenaScoreboard {
 			return;
 		}
 
-		if (initialized != 1) {
-			custom = plugin.getConfig().getBoolean("config.use_custom_scoreboard");
+		if (this.initialized != 1) {
+			this.custom = plugin.getConfig().getBoolean("config.use_custom_scoreboard");
 		}
 
-		if (pli == null) {
-			pli = MinigamesAPI.getAPI().getPluginInstance(plugin);
+		if (this.pli == null) {
+			this.pli = MinigamesAPI.getAPI().getPluginInstance(plugin);
 		}
 
 		Bukkit.getScheduler().runTask(MinigamesAPI.getAPI(), new Runnable() {
@@ -67,28 +67,28 @@ public class ArenaScoreboard {
 					}
 					Player p = Bukkit.getPlayer(playername);
 					if (!custom) {
-						if (!ascore.containsKey(arena.getInternalName())) {
-							ascore.put(arena.getInternalName(), Bukkit.getScoreboardManager().getNewScoreboard());
+						if (!arenaScore.containsKey(arena.getInternalName())) {
+							arenaScore.put(arena.getInternalName(), Bukkit.getScoreboardManager().getNewScoreboard());
 						}
-						if (!aobjective.containsKey(arena.getInternalName())) {
-							aobjective.put(arena.getInternalName(), ascore.get(arena.getInternalName()).registerNewObjective(arena.getInternalName(), "dummy"));
-							aobjective.get(arena.getInternalName()).setDisplaySlot(DisplaySlot.SIDEBAR);
-							aobjective.get(arena.getInternalName()).setDisplayName(pli.getMessagesConfig().scoreboard_title.replaceAll("<arena>", arena.getInternalName()));
+						if (!arenaObjective.containsKey(arena.getInternalName())) {
+							arenaObjective.put(arena.getInternalName(), arenaScore.get(arena.getInternalName()).registerNewObjective(arena.getInternalName(), "dummy"));
+							arenaObjective.get(arena.getInternalName()).setDisplaySlot(DisplaySlot.SIDEBAR);
+							arenaObjective.get(arena.getInternalName()).setDisplayName(pli.getMessagesConfig().scoreboard_title.replaceAll("<arena>", arena.getInternalName()));
 						}
 					} else {
-						if (!ascore.containsKey(playername)) {
-							ascore.put(playername, Bukkit.getScoreboardManager().getNewScoreboard());
+						if (!arenaScore.containsKey(playername)) {
+							arenaScore.put(playername, Bukkit.getScoreboardManager().getNewScoreboard());
 						}
-						if (!aobjective.containsKey(playername)) {
-							aobjective.put(playername, ascore.get(playername).registerNewObjective(playername, "dummy"));
-							aobjective.get(playername).setDisplaySlot(DisplaySlot.SIDEBAR);
-							aobjective.get(playername).setDisplayName(pli.getMessagesConfig().scoreboard_title.replaceAll("<arena>", arena.getInternalName()));
+						if (!arenaObjective.containsKey(playername)) {
+							arenaObjective.put(playername, arenaScore.get(playername).registerNewObjective(playername, "dummy"));
+							arenaObjective.get(playername).setDisplaySlot(DisplaySlot.SIDEBAR);
+							arenaObjective.get(playername).setDisplayName(pli.getMessagesConfig().scoreboard_title.replaceAll("<arena>", arena.getInternalName()));
 						}
 					}
 
 					if (custom) {
 						try {
-							for (String line : loaded_custom_strings) {
+							for (String line : loadedCustomStrings) {
 								String[] line_arr = line.split(":");
 								String line_ = line_arr[0];
 								String score_identifier = line_arr[1];
@@ -107,16 +107,16 @@ public class ArenaScoreboard {
 									score = (int) MinigamesAPI.econ.getBalance(playername);
 								}
 								if (line_.length() < 15) {
-									Util.resetScores(ascore.get(playername), ChatColor.GREEN + line_);
-									Util.getScore(aobjective.get(playername), ChatColor.GREEN + line_).setScore(score);
+									Util.resetScores(arenaScore.get(playername), ChatColor.GREEN + line_);
+									Util.getScore(arenaObjective.get(playername), ChatColor.GREEN + line_).setScore(score);
 								} else {
-									Util.resetScores(ascore.get(playername), ChatColor.GREEN + line_.substring(0, Math.min(line_.length() - 3, 13)));
-									Util.getScore(aobjective.get(playername), ChatColor.GREEN + line_.substring(0, Math.min(line_.length() - 3, 13))).setScore(score);
+									Util.resetScores(arenaScore.get(playername), ChatColor.GREEN + line_.substring(0, Math.min(line_.length() - 3, 13)));
+									Util.getScore(arenaObjective.get(playername), ChatColor.GREEN + line_.substring(0, Math.min(line_.length() - 3, 13))).setScore(score);
 								}
 							}
 
-							if (ascore.get(playername) != null) {
-								p.setScoreboard(ascore.get(playername));
+							if (arenaScore.get(playername) != null) {
+								p.setScoreboard(arenaScore.get(playername));
 							}
 						} catch (Exception e) {
 							System.out.println("Failed to set custom scoreboard: ");
@@ -128,37 +128,37 @@ public class ArenaScoreboard {
 								continue;
 							}
 							Player p_ = Bukkit.getPlayer(playername_);
-							if (!pli.globalLost.containsKey(playername_)) {
+							if (!pli.getGlobalLost().containsKey(playername_)) {
 								int score = 0;
-								if (currentscore.containsKey(playername_)) {
-									int oldscore = currentscore.get(playername_);
+								if (currentScore.containsKey(playername_)) {
+									int oldscore = currentScore.get(playername_);
 									if (score > oldscore) {
-										currentscore.put(playername_, score);
+										currentScore.put(playername_, score);
 									} else {
 										score = oldscore;
 									}
 								} else {
-									currentscore.put(playername_, score);
+									currentScore.put(playername_, score);
 								}
 								try {
 									if (p_.getName().length() < 15) {
-										Util.getScore(aobjective.get(arena.getInternalName()), ChatColor.GREEN + p_.getName()).setScore(0);
+										Util.getScore(arenaObjective.get(arena.getInternalName()), ChatColor.GREEN + p_.getName()).setScore(0);
 									} else {
-										Util.getScore(aobjective.get(arena.getInternalName()), ChatColor.GREEN + p_.getName().substring(0, p_.getName().length() - 3)).setScore(0);
+										Util.getScore(arenaObjective.get(arena.getInternalName()), ChatColor.GREEN + p_.getName().substring(0, p_.getName().length() - 3)).setScore(0);
 										;
 									}
 								} catch (Exception e) {
 								}
-							} else if (pli.globalLost.containsKey(playername_)) {
+							} else if (pli.getGlobalLost().containsKey(playername_)) {
 								try {
-									if (currentscore.containsKey(playername_)) {
-										int score = currentscore.get(playername_);
+									if (currentScore.containsKey(playername_)) {
+										int score = currentScore.get(playername_);
 										if (p_.getName().length() < 15) {
-											Util.resetScores(ascore.get(arena.getInternalName()), ChatColor.GREEN + p_.getName());
-											Util.getScore(aobjective.get(arena.getInternalName()), ChatColor.RED + p_.getName()).setScore(0);
+											Util.resetScores(arenaScore.get(arena.getInternalName()), ChatColor.GREEN + p_.getName());
+											Util.getScore(arenaObjective.get(arena.getInternalName()), ChatColor.RED + p_.getName()).setScore(0);
 										} else {
-											Util.resetScores(ascore.get(arena.getInternalName()), ChatColor.GREEN + p_.getName().substring(0, p_.getName().length() - 3));
-											Util.getScore(aobjective.get(arena.getInternalName()), ChatColor.RED + p_.getName().substring(0, p_.getName().length() - 3)).setScore(0);
+											Util.resetScores(arenaScore.get(arena.getInternalName()), ChatColor.GREEN + p_.getName().substring(0, p_.getName().length() - 3));
+											Util.getScore(arenaObjective.get(arena.getInternalName()), ChatColor.RED + p_.getName().substring(0, p_.getName().length() - 3)).setScore(0);
 										}
 									}
 								} catch (Exception e) {
@@ -166,8 +166,8 @@ public class ArenaScoreboard {
 							}
 						}
 
-						if (ascore.get(arena.getInternalName()) != null) {
-							p.setScoreboard(ascore.get(arena.getInternalName()));
+						if (arenaScore.get(arena.getInternalName()) != null) {
+							p.setScoreboard(arenaScore.get(arena.getInternalName()));
 						}
 					}
 
@@ -188,9 +188,9 @@ public class ArenaScoreboard {
 	}
 
 	public void clearScoreboard(String arenaname) {
-		if (ascore.containsKey(arenaname)) {
+		if (this.arenaScore.containsKey(arenaname)) {
 			try {
-				Scoreboard sc = ascore.get(arenaname);
+				Scoreboard sc = this.arenaScore.get(arenaname);
 				for (OfflinePlayer player : sc.getPlayers()) {
 					sc.resetScores(player);
 				}
@@ -199,16 +199,16 @@ public class ArenaScoreboard {
 					e.printStackTrace();
 				}
 			}
-			ascore.remove(arenaname);
+			this.arenaScore.remove(arenaname);
 		}
-		if (aobjective.containsKey(arenaname)) {
-			aobjective.remove(arenaname);
+		if (this.arenaObjective.containsKey(arenaname)) {
+			this.arenaObjective.remove(arenaname);
 		}
 
 		// ascore.put(arenaname, Bukkit.getScoreboardManager().getNewScoreboard());
 	}
 
 	public void setCurrentScoreMap(HashMap<String, Integer> newcurrentscore) {
-		this.currentscore = newcurrentscore;
+		this.currentScore = newcurrentscore;
 	}
 }

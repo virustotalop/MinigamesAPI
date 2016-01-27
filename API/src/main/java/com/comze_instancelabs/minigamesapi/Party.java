@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 
 public class Party {
 
-	String owner;
-	ArrayList<String> players = new ArrayList<String>();
+	private String owner;
+	private ArrayList<String> players = new ArrayList<String>();
 
 	public Party(String owner) {
 		this.owner = owner;
@@ -23,21 +23,21 @@ public class Party {
 	}
 
 	public void addPlayer(String p) {
-		if (!players.contains(p)) {
-			players.add(p);
+		if (!this.players.contains(p)) {
+			this.players.add(p);
 		}
-		Bukkit.getPlayer(p).sendMessage(MinigamesAPI.getAPI().partymessages.you_joined_party.replaceAll("<player>", this.getOwner()));
-		tellAll(MinigamesAPI.getAPI().partymessages.player_joined_party.replaceAll("<player>", p));
+		Bukkit.getPlayer(p).sendMessage(MinigamesAPI.getAPI().partymessages.youJoinedParty.replaceAll("<player>", this.getOwner()));
+		tellAll(MinigamesAPI.getAPI().partymessages.playerJoinedParty.replaceAll("<player>", p));
 	}
 
 	public boolean removePlayer(String p) {
-		if (players.contains(p)) {
-			players.remove(p);
+		if (this.players.contains(p)) {
+			this.players.remove(p);
 			Player p___ = Bukkit.getPlayer(p);
 			if (p___ != null) {
-				p___.sendMessage(MinigamesAPI.getAPI().partymessages.you_left_party.replaceAll("<player>", this.getOwner()));
+				p___.sendMessage(MinigamesAPI.getAPI().partymessages.youLeftParty.replaceAll("<player>", this.getOwner()));
 			}
-			tellAll(MinigamesAPI.getAPI().partymessages.player_left_party.replaceAll("<player>", p));
+			tellAll(MinigamesAPI.getAPI().partymessages.playerLeftParty.replaceAll("<player>", p));
 			return true;
 		}
 		return false;
@@ -48,10 +48,10 @@ public class Party {
 	}
 
 	public void disband() {
-		tellAll(MinigamesAPI.getAPI().partymessages.party_disbanded);
-		if (MinigamesAPI.getAPI().global_party.containsKey(owner)) {
+		tellAll(MinigamesAPI.getAPI().partymessages.partyDisbanded);
+		if (MinigamesAPI.getAPI().globalParty.containsKey(owner)) {
 			this.players.clear();
-			MinigamesAPI.getAPI().global_party.remove(owner);
+			MinigamesAPI.getAPI().globalParty.remove(owner);
 		}
 	}
 

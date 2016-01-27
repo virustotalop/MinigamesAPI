@@ -7,7 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class DefaultConfig {
 
-	JavaPlugin plugin;
+	private JavaPlugin plugin;
 
 	public DefaultConfig(JavaPlugin plugin, boolean custom) {
 		this.plugin = plugin;

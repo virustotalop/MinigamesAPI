@@ -20,22 +20,22 @@ public class PlayerEvent extends Event {
 	}
 
 	public Arena getArena() {
-		return arena;
+		return this.arena;
 	}
 
 	public Player getPlayer() {
-		return player;
+		return this.player;
 	}
 
 	public JavaPlugin getPlugin() {
-		return plugin;
+		return this.plugin;
 	}
 
 	public HandlerList getHandlers() {
-		return handlers;
+		return PlayerEvent.handlers;
 	}
 
 	public static HandlerList getHandlerList() {
-		return handlers;
+		return PlayerEvent.handlers;
 	}
 }

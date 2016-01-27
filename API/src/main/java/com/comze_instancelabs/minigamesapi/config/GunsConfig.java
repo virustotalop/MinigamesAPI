@@ -65,14 +65,14 @@ public class GunsConfig {
 	}
 
 	public FileConfiguration getConfig() {
-		if (arenaConfig == null) {
+		if (this.arenaConfig == null) {
 			reloadConfig();
 		}
-		return arenaConfig;
+		return this.arenaConfig;
 	}
 
 	public void saveConfig() {
-		if (arenaConfig == null || arenaFile == null) {
+		if (this.arenaConfig == null || arenaFile == null) {
 			return;
 		}
 		try {
@@ -83,15 +83,15 @@ public class GunsConfig {
 	}
 
 	public void reloadConfig() {
-		if (arenaFile == null) {
-			arenaFile = new File(plugin.getDataFolder(), "guns.yml");
+		if (this.arenaFile == null) {
+			this.arenaFile = new File(plugin.getDataFolder(), "guns.yml");
 		}
-		arenaConfig = YamlConfiguration.loadConfiguration(arenaFile);
+		this.arenaConfig = YamlConfiguration.loadConfiguration(this.arenaFile);
 
-		InputStream defConfigStream = plugin.getResource("guns.yml");
+		InputStream defConfigStream = this.plugin.getResource("guns.yml");
 		if (defConfigStream != null) {
 			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-			arenaConfig.setDefaults(defConfig);
+			this.arenaConfig.setDefaults(defConfig);
 		}
 	}
 

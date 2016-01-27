@@ -22,42 +22,42 @@ public class ArenaBlock implements Serializable {
     private String world;
     private Material m;
     private byte data;
-    private ArrayList<Material> item_mats;
-    private ArrayList<Byte> item_data;
-    private ArrayList<Integer> item_amounts;
-    private ArrayList<String> item_displaynames;
+    private ArrayList<Material> itemMaterial;
+    private ArrayList<Byte> itemData;
+    private ArrayList<Integer> itemAmounts;
+    private ArrayList<String> itemDisplayNames;
 
     // optional stuff
-    private ArrayList<Boolean> item_splash;
+    private ArrayList<Boolean> itemSplash;
 
     private ItemStack[] inv;
 
     public ArenaBlock(Block b, boolean c) {
-        m = b.getType();
-        x = b.getX();
-        y = b.getY();
-        z = b.getZ();
-        data = b.getData();
-        world = b.getWorld().getName();
+    	this.m = b.getType();
+    	this.x = b.getX();
+        this.y = b.getY();
+        this.z = b.getZ();
+        this.data = b.getData();
+        this.world = b.getWorld().getName();
         if (c) {
-            inv = ((Chest) b.getState()).getInventory().getContents();
-            item_mats = new ArrayList<Material>();
-            item_data = new ArrayList<Byte>();
-            item_amounts = new ArrayList<Integer>();
-            item_displaynames = new ArrayList<String>();
-            item_splash = new ArrayList<Boolean>();
+        	this.inv = ((Chest) b.getState()).getInventory().getContents();
+            this.itemMaterial = new ArrayList<Material>();
+            this.itemData = new ArrayList<Byte>();
+            this.itemAmounts = new ArrayList<Integer>();
+            this.itemDisplayNames = new ArrayList<String>();
+            this.itemSplash = new ArrayList<Boolean>();
 
             for (ItemStack i : ((Chest) b.getState()).getInventory().getContents()) {
                 if (i != null) {
-                    item_mats.add(i.getType());
-                    item_data.add(i.getData().getData());
-                    item_amounts.add(i.getAmount());
-                    item_displaynames.add(i.getItemMeta().getDisplayName());
+                	this.itemMaterial.add(i.getType());
+                    this.itemData.add(i.getData().getData());
+                    this.itemAmounts.add(i.getAmount());
+                    this.itemDisplayNames.add(i.getItemMeta().getDisplayName());
                     if (i.getType() == Material.POTION && i.getDurability() > 0 && i.getData().getData() > 0) {
                         Potion potion = Potion.fromDamage(i.getDurability() & 0x3F);
-                        item_splash.add(potion.isSplash());
+                        this.itemSplash.add(potion.isSplash());
                     } else {
-                        item_splash.add(false);
+                    	this.itemSplash.add(false);
                     }
                 }
             }
@@ -65,45 +65,45 @@ public class ArenaBlock implements Serializable {
     }
 
     public ArenaBlock(Location l) {
-        m = Material.AIR;
-        x = l.getBlockX();
-        y = l.getBlockY();
-        z = l.getBlockZ();
-        world = l.getWorld().getName();
+    	this.m = Material.AIR;
+    	this.x = l.getBlockX();
+    	this.y = l.getBlockY();
+    	this.z = l.getBlockZ();
+    	this.world = l.getWorld().getName();
     }
 
     public Block getBlock() {
-        World w = Bukkit.getWorld(world);
+        World w = Bukkit.getWorld(this.world);
         if (w == null)
             return null;
-        Block b = w.getBlockAt(x, y, z);
+        Block b = w.getBlockAt(this.x, this.y, this.z);
         return b;
     }
 
     public Material getMaterial() {
-        return m;
+        return this.m;
     }
 
     public Byte getData() {
-        return data;
+        return this.data;
     }
 
     public ItemStack[] getInventory() {
-        return inv;
+        return this.inv;
     }
 
     public ArrayList<ItemStack> getNewInventory() {
         int c = 0;
         ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
-        for (int i = 0; i < item_mats.size(); i++) {
-            ItemStack item = new ItemStack(item_mats.get(i), item_amounts.get(i), item_data.get(i));
+        for (int i = 0; i < this.itemMaterial.size(); i++) {
+            ItemStack item = new ItemStack(itemMaterial.get(i), this.itemAmounts.get(i), this.itemData.get(i));
             ItemMeta im = item.getItemMeta();
-            im.setDisplayName(item_displaynames.get(i));
+            im.setDisplayName(this.itemDisplayNames.get(i));
             item.setItemMeta(im);
             if (item.getType() == Material.POTION && item.getDurability() > 0) {
                 Potion potion = Potion.fromDamage(item.getDurability() & 0x3F);
-                potion.setSplash(item_splash.get(i));
-                item = potion.toItemStack(item_amounts.get(i));
+                potion.setSplash(this.itemSplash.get(i));
+                item = potion.toItemStack(this.itemAmounts.get(i));
             }
             ret.add(item);
         }

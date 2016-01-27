@@ -40,12 +40,12 @@ public class IconMenu implements Listener {
 	public IconMenu setOption(int position, ItemStack icon, String name, String... info) {
 		if (position < 0)
 			position = 0;
-		if (optionNames == null)
+		if (this.optionNames == null)
 			this.optionNames = new String[size];
-		if (optionIcons == null)
+		if (this.optionIcons == null)
 			this.optionIcons = new ItemStack[size];
-		optionNames[position] = name;
-		optionIcons[position] = setItemNameAndLore(icon, name, info);
+		this.optionNames[position] = name;
+		this.optionIcons[position] = setItemNameAndLore(icon, name, info);
 		return this;
 	}
 
@@ -73,28 +73,28 @@ public class IconMenu implements Listener {
 
 	public void destroy() {
 		HandlerList.unregisterAll(this);
-		handler = null;
-		plugin = null;
-		optionNames = null;
-		optionIcons = null;
+		this.handler = null;
+		this.plugin = null;
+		this.optionNames = null;
+		this.optionIcons = null;
 	}
 
 	public void clear() {
-		optionNames = null;
-		optionIcons = null;
+		this.optionNames = null;
+		this.optionIcons = null;
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	void onInventoryClick(InventoryClickEvent event) {
-		if (event.getInventory().getTitle().equals(name) && (player == null || event.getWhoClicked() == player)) {
+		if (event.getInventory().getTitle().equals(this.name) && (this.player == null || event.getWhoClicked() == this.player)) {
 			event.setCancelled(true);
 			if (event.getClick() != ClickType.LEFT)
 				return;
 			int slot = event.getRawSlot();
-			if (slot >= 0 && slot < size && optionNames[slot] != null) {
+			if (slot >= 0 && slot < this.size && this.optionNames[slot] != null) {
 				Plugin plugin = this.plugin;
-				OptionClickEvent e = new OptionClickEvent((Player) event.getWhoClicked(), slot, optionNames[slot], optionIcons[slot]);
-				handler.onOptionClick(e);
+				OptionClickEvent e = new OptionClickEvent((Player) event.getWhoClicked(), slot, this.optionNames[slot], this.optionIcons[slot]);
+				this.handler.onOptionClick(e);
 				((Player) event.getWhoClicked()).updateInventory();
 				if (e.willClose()) {
 					final Player p = (Player) event.getWhoClicked();
@@ -133,23 +133,23 @@ public class IconMenu implements Listener {
 		}
 
 		public Player getPlayer() {
-			return player;
+			return this.player;
 		}
 
 		public int getPosition() {
-			return position;
+			return this.position;
 		}
 
 		public String getName() {
-			return name;
+			return this.name;
 		}
 
 		public boolean willClose() {
-			return close;
+			return this.close;
 		}
 
 		public boolean willDestroy() {
-			return destroy;
+			return this.destroy;
 		}
 
 		public void setWillClose(boolean close) {
@@ -161,7 +161,7 @@ public class IconMenu implements Listener {
 		}
 
 		public ItemStack getItem() {
-			return item;
+			return this.item;
 		}
 	}
 

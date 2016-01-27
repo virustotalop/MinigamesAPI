@@ -18,6 +18,7 @@ import com.comze_instancelabs.minigamesapi.ArenaState;
 import com.comze_instancelabs.minigamesapi.MinigamesAPI;
 import com.comze_instancelabs.minigamesapi.Party;
 import com.comze_instancelabs.minigamesapi.PluginInstance;
+import com.comze_instancelabs.minigamesapi.Stats;
 import com.comze_instancelabs.minigamesapi.config.HologramsConfig;
 import com.comze_instancelabs.minigamesapi.util.AClass;
 import com.comze_instancelabs.minigamesapi.util.Util;
@@ -232,12 +233,12 @@ public class CommandHandler {
 
 	public boolean setSpawn(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 1) {
-			pli.arenaSetup.setSpawn(plugin, args[1], p.getLocation());
-			sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "spawn"));
+			pli.getArenaSetup().setSpawn(plugin, args[1], p.getLocation());
+			sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "spawn"));
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena>");
 		}
@@ -246,12 +247,12 @@ public class CommandHandler {
 
 	public boolean setSpecSpawn(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 1) {
 			Util.saveComponentForArena(plugin, args[1], "specspawn", p.getLocation());
-			sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "spectator spawn"));
+			sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "spectator spawn"));
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena>");
 		}
@@ -260,12 +261,12 @@ public class CommandHandler {
 
 	public boolean setLobby(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 1) {
-			pli.arenaSetup.setLobby(plugin, args[1], p.getLocation());
-			sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "waiting lobby"));
+			pli.getArenaSetup().setLobby(plugin, args[1], p.getLocation());
+			sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "waiting lobby"));
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena>");
 		}
@@ -274,29 +275,29 @@ public class CommandHandler {
 
 	public boolean setMainLobby(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
-		pli.arenaSetup.setMainLobby(plugin, p.getLocation());
-		sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "main lobby"));
+		pli.getArenaSetup().setMainLobby(plugin, p.getLocation());
+		sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "main lobby"));
 		return true;
 	}
 
 	public boolean setBounds(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
 			if (args[2].equalsIgnoreCase("low")) {
-				pli.arenaSetup.setBoundaries(plugin, args[1], p.getLocation(), true);
+				pli.getArenaSetup().setBoundaries(plugin, args[1], p.getLocation(), true);
 			} else if (args[2].equalsIgnoreCase("high")) {
-				pli.arenaSetup.setBoundaries(plugin, args[1], p.getLocation(), false);
+				pli.getArenaSetup().setBoundaries(plugin, args[1], p.getLocation(), false);
 			} else {
 				sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <low/high>");
 				return true;
 			}
-			sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "boundary"));
+			sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "boundary"));
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <low/high>");
 		}
@@ -305,19 +306,19 @@ public class CommandHandler {
 
 	public boolean setLobbyBounds(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
 			if (args[2].equalsIgnoreCase("low")) {
-				pli.arenaSetup.setBoundaries(plugin, args[1], p.getLocation(), true, "lobbybounds");
+				pli.getArenaSetup().setBoundaries(plugin, args[1], p.getLocation(), true, "lobbybounds");
 			} else if (args[2].equalsIgnoreCase("high")) {
-				pli.arenaSetup.setBoundaries(plugin, args[1], p.getLocation(), false, "lobbybounds");
+				pli.getArenaSetup().setBoundaries(plugin, args[1], p.getLocation(), false, "lobbybounds");
 			} else {
 				sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <low/high>");
 				return true;
 			}
-			sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "lobby boundary"));
+			sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "lobby boundary"));
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <low/high>");
 		}
@@ -326,19 +327,19 @@ public class CommandHandler {
 
 	public boolean setSpecBounds(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
 			if (args[2].equalsIgnoreCase("low")) {
-				pli.arenaSetup.setBoundaries(plugin, args[1], p.getLocation(), true, "specbounds");
+				pli.getArenaSetup().setBoundaries(plugin, args[1], p.getLocation(), true, "specbounds");
 			} else if (args[2].equalsIgnoreCase("high")) {
-				pli.arenaSetup.setBoundaries(plugin, args[1], p.getLocation(), false, "specbounds");
+				pli.getArenaSetup().setBoundaries(plugin, args[1], p.getLocation(), false, "specbounds");
 			} else {
 				sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <low/high>");
 				return true;
 			}
-			sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "spectator boundary"));
+			sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "spectator boundary"));
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <low/high>");
 		}
@@ -347,11 +348,11 @@ public class CommandHandler {
 
 	public boolean saveArena(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 1) {
-			Arena temp = pli.arenaSetup.saveArena(plugin, args[1]);
+			Arena temp = pli.getArenaSetup().saveArena(plugin, args[1]);
 			if (temp != null) {
 				sender.sendMessage(pli.getMessagesConfig().successfully_saved_arena.replaceAll("<arena>", args[1]));
 			} else {
@@ -367,18 +368,18 @@ public class CommandHandler {
 
 	public boolean setMaxPlayers(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
 			if (!Util.isNumeric(args[2])) {
 				return true;
 			}
-			pli.arenaSetup.setPlayerCount(plugin, args[1], Integer.parseInt(args[2]), true);
+			pli.getArenaSetup().setPlayerCount(plugin, args[1], Integer.parseInt(args[2]), true);
 			if (pli.getArenaByName(args[1]) != null) {
 				pli.getArenaByName(args[1]).setMaxPlayers(Integer.parseInt(args[2]));
 			}
-			sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "max players"));
+			sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "max players"));
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <count>");
 		}
@@ -387,18 +388,18 @@ public class CommandHandler {
 
 	public boolean setMinPlayers(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
 			if (!Util.isNumeric(args[2])) {
 				return true;
 			}
-			pli.arenaSetup.setPlayerCount(plugin, args[1], Integer.parseInt(args[2]), false);
+			pli.getArenaSetup().setPlayerCount(plugin, args[1], Integer.parseInt(args[2]), false);
 			if (pli.getArenaByName(args[1]) != null) {
 				pli.getArenaByName(args[1]).setMinPlayers(Integer.parseInt(args[2]));
 			}
-			sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "min players"));
+			sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "min players"));
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <count>");
 		}
@@ -407,18 +408,18 @@ public class CommandHandler {
 
 	public boolean setArenaVIP(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
 			if (!args[2].equalsIgnoreCase("true") && !args[2].equalsIgnoreCase("false")) {
 				return true;
 			}
-			pli.arenaSetup.setArenaVIP(plugin, args[1], Boolean.parseBoolean(args[2]));
+			pli.getArenaSetup().setArenaVIP(plugin, args[1], Boolean.parseBoolean(args[2]));
 			if (pli.getArenaByName(args[1]) != null) {
 				pli.getArenaByName(args[1]).setVIPArena(Boolean.parseBoolean(args[2]));
 			}
-			sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "vip value"));
+			sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "vip value"));
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <true/false>");
 		}
@@ -438,10 +439,10 @@ public class CommandHandler {
 				if (!temp.containsPlayer(playername)) {
 					temp.joinPlayerLobby(playername);
 				} else {
-					sender.sendMessage(pli.getMessagesConfig().you_already_are_in_arena.replaceAll("<arena>", temp.getInternalName()));
+					sender.sendMessage(pli.getMessagesConfig().youAreAlreadyInAnArena.replaceAll("<arena>", temp.getInternalName()));
 				}
 			} else {
-				sender.sendMessage(pli.getMessagesConfig().arena_invalid.replaceAll("<arena>", args[1]));
+				sender.sendMessage(pli.getMessagesConfig().arenaInvalid.replaceAll("<arena>", args[1]));
 			}
 		} else {
 			Arena a_ = null;
@@ -453,14 +454,14 @@ public class CommandHandler {
 			if (a_ != null) {
 				a_.joinPlayerLobby(p.getName());
 			} else {
-				sender.sendMessage(pli.getMessagesConfig().arena_invalid.replaceAll("<arena>", "Arena"));
+				sender.sendMessage(pli.getMessagesConfig().arenaInvalid.replaceAll("<arena>", "Arena"));
 			}
 		}
 		return true;
 	}
 
 	public boolean leaveArena(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
-		if (pli.globalPlayers.containsKey(p.getName())) {
+		if (pli.getGlobalPlayers().containsKey(p.getName())) {
 			String playername = p.getName();
 			if (args.length > 1) {
 				if (sender.hasPermission(uber_permission + ".kickplayer")) {
@@ -469,7 +470,7 @@ public class CommandHandler {
 					}
 				}
 			}
-			Arena a = pli.globalPlayers.get(playername);
+			Arena a = pli.getGlobalPlayers().get(playername);
 			if (a.getArcadeInstance() != null) {
 				a.getArcadeInstance().leaveArcade(playername, true);
 			}
@@ -482,51 +483,51 @@ public class CommandHandler {
 
 	public boolean startArena(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".start")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 1) {
 			Arena temp = pli.getArenaByName(args[1]);
 			if (temp != null) {
 				temp.start(true);
-				sender.sendMessage(pli.getMessagesConfig().arena_action.replaceAll("<arena>", args[1]).replaceAll("<action>", "started"));
+				sender.sendMessage(pli.getMessagesConfig().arenaAction.replaceAll("<arena>", args[1]).replaceAll("<action>", "started"));
 			} else {
-				sender.sendMessage(pli.getMessagesConfig().arena_invalid.replaceAll("<arena>", args[1]));
+				sender.sendMessage(pli.getMessagesConfig().arenaInvalid.replaceAll("<arena>", args[1]));
 			}
 		} else {
-			sender.sendMessage(pli.getMessagesConfig().arena_invalid.replaceAll("<arena>", "Arena"));
+			sender.sendMessage(pli.getMessagesConfig().arenaInvalid.replaceAll("<arena>", "Arena"));
 		}
 		return true;
 	}
 
 	public boolean stopArena(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".stop")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 1) {
 			Arena temp = pli.getArenaByName(args[1]);
 			if (temp != null) {
 				temp.stop();
-				sender.sendMessage(pli.getMessagesConfig().arena_action.replaceAll("<arena>", args[1]).replaceAll("<action>", "stopped"));
+				sender.sendMessage(pli.getMessagesConfig().arenaAction.replaceAll("<arena>", args[1]).replaceAll("<action>", "stopped"));
 			} else {
-				sender.sendMessage(pli.getMessagesConfig().arena_invalid.replaceAll("<arena>", args[1]));
+				sender.sendMessage(pli.getMessagesConfig().arenaInvalid.replaceAll("<arena>", args[1]));
 			}
 		} else {
 			if (pli.containsGlobalPlayer(p.getName())) {
-				Arena a = pli.globalPlayers.get(p.getName());
+				Arena a = pli.getGlobalPlayers().get(p.getName());
 				a.stop();
-				sender.sendMessage(pli.getMessagesConfig().arena_action.replaceAll("<arena>", args[1]).replaceAll("<action>", "stopped"));
+				sender.sendMessage(pli.getMessagesConfig().arenaAction.replaceAll("<arena>", args[1]).replaceAll("<action>", "stopped"));
 				return true;
 			}
-			sender.sendMessage(pli.getMessagesConfig().arena_invalid.replaceAll("<arena>", "Arena"));
+			sender.sendMessage(pli.getMessagesConfig().arenaInvalid.replaceAll("<arena>", "Arena"));
 		}
 		return true;
 	}
 
 	public boolean stopAllArenas(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".stop")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		for (Arena a : pli.getArenas()) {
@@ -537,14 +538,14 @@ public class CommandHandler {
 
 	public boolean removeArena(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 1) {
 			pli.getArenasConfig().getConfig().set("arenas." + args[1], null);
 			pli.getArenasConfig().saveConfig();
 			if (pli.removeArena(pli.getArenaByName(args[1]))) {
-				sender.sendMessage(pli.getMessagesConfig().arena_action.replaceAll("<arena>", args[1]).replaceAll("<action>", "removed"));
+				sender.sendMessage(pli.getMessagesConfig().arenaAction.replaceAll("<arena>", args[1]).replaceAll("<action>", "removed"));
 			} else {
 				sender.sendMessage(pli.getMessagesConfig().failed_removing_arena.replaceAll("<arena>", args[1]));
 			}
@@ -557,15 +558,15 @@ public class CommandHandler {
 
 	public boolean removeSpawn(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
 			if (Util.isNumeric(args[2])) {
-				if (pli.arenaSetup.removeSpawn(plugin, args[1], Integer.parseInt(args[2]))) {
-					sender.sendMessage(pli.getMessagesConfig().successfully_removed.replaceAll("<component>", "spawn " + args[2]));
+				if (pli.getArenaSetup().removeSpawn(plugin, args[1], Integer.parseInt(args[2]))) {
+					sender.sendMessage(pli.getMessagesConfig().successfullyRemoved.replaceAll("<component>", "spawn " + args[2]));
 				} else {
-					sender.sendMessage(pli.getMessagesConfig().failed_removing_component.replaceAll("<component>", "spawn " + args[2]).replaceAll("<cause>", "Possibly the provided count couldn't be found: " + args[2]));
+					sender.sendMessage(pli.getMessagesConfig().failedRemovingComponent.replaceAll("<component>", "spawn " + args[2]).replaceAll("<cause>", "Possibly the provided count couldn't be found: " + args[2]));
 				}
 			} else {
 
@@ -579,14 +580,14 @@ public class CommandHandler {
 	// TODO Implement skulls
 	public boolean setSkull(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		sender.sendMessage(ChatColor.GRAY + "This feature is not implemented yet.");
 		if (args.length > 1) {
 			if (Util.isNumeric(args[1])) {
 				int count = Integer.parseInt(args[1]);
-				p.getInventory().addItem(pli.getStatsInstance().giveSkull(args[1]));
+				p.getInventory().addItem(Stats.giveSkull(args[1]));
 				p.updateInventory();
 				pli.getStatsInstance().skullsetup.add(p.getName());
 			} else {
@@ -600,13 +601,13 @@ public class CommandHandler {
 
 	public boolean setEnabled(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
 			if (args[2].equalsIgnoreCase("true") || args[2].equalsIgnoreCase("false")) {
-				pli.arenaSetup.setArenaEnabled(plugin, args[1], Boolean.parseBoolean(args[2]));
-				sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "enabled state"));
+				pli.getArenaSetup().setArenaEnabled(plugin, args[1], Boolean.parseBoolean(args[2]));
+				sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "enabled state"));
 			} else {
 				sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <true/false>");
 			}
@@ -618,13 +619,13 @@ public class CommandHandler {
 
 	public boolean setShowScoreboard(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
 			if (args[2].equalsIgnoreCase("true") || args[2].equalsIgnoreCase("false")) {
-				pli.arenaSetup.setShowScoreboard(plugin, args[1], Boolean.parseBoolean(args[2]));
-				sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "scoreboard state"));
+				pli.getArenaSetup().setShowScoreboard(plugin, args[1], Boolean.parseBoolean(args[2]));
+				sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "scoreboard state"));
 			} else {
 				sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <true/false>");
 			}
@@ -636,7 +637,7 @@ public class CommandHandler {
 
 	public boolean resetArena(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".reset")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 1) {
@@ -648,7 +649,7 @@ public class CommandHandler {
 							Util.loadArenaFromFileSYNC(plugin, a);
 						}
 					});
-					sender.sendMessage(pli.getMessagesConfig().arena_action.replaceAll("<arena>", args[1]).replaceAll("<action>", "reset"));
+					sender.sendMessage(pli.getMessagesConfig().arenaAction.replaceAll("<arena>", args[1]).replaceAll("<action>", "reset"));
 				}
 			}
 		} else {
@@ -659,7 +660,7 @@ public class CommandHandler {
 
 	public boolean setAuthor(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
@@ -667,7 +668,7 @@ public class CommandHandler {
 			if (Validator.isArenaValid(plugin, args[1])) {
 				pli.getArenasConfig().getConfig().set("arenas." + args[1] + ".author", author);
 				pli.getArenasConfig().saveConfig();
-				sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "author"));
+				sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "author"));
 			}
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <author>");
@@ -677,7 +678,7 @@ public class CommandHandler {
 
 	public boolean setDescription(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
@@ -685,7 +686,7 @@ public class CommandHandler {
 			if (Validator.isArenaValid(plugin, args[1])) {
 				pli.getArenasConfig().getConfig().set("arenas." + args[1] + ".description", desc);
 				pli.getArenasConfig().saveConfig();
-				sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "description"));
+				sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "description"));
 			}
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <description>");
@@ -695,7 +696,7 @@ public class CommandHandler {
 
 	public boolean setArenaDisplayName(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		if (args.length > 2) {
@@ -704,7 +705,7 @@ public class CommandHandler {
 				pli.getArenasConfig().getConfig().set("arenas." + args[1] + ".displayname", displayname);
 				pli.getArenasConfig().saveConfig();
 				pli.reloadArena(args[1]);
-				sender.sendMessage(pli.getMessagesConfig().successfully_set.replaceAll("<component>", "displayname"));
+				sender.sendMessage(pli.getMessagesConfig().successfullySet.replaceAll("<component>", "displayname"));
 			}
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <arena> <displayname>");
@@ -730,15 +731,15 @@ public class CommandHandler {
 						ap.setInventories(p.getInventory().getContents(), p.getInventory().getArmorContents());
 						ap.setOriginalGamemode(p.getGameMode());
 						ap.setOriginalXplvl(p.getLevel());
-						pli.globalPlayers.put(playername, temp);
-						pli.globalLost.put(playername, temp);
+						pli.getGlobalPlayers().put(playername, temp);
+						pli.getGlobalLost().put(playername, temp);
 						temp.spectateGame(playername);
 					} else {
-						sender.sendMessage(pli.getMessagesConfig().you_already_are_in_arena.replaceAll("<arena>", temp.getInternalName()));
+						sender.sendMessage(pli.getMessagesConfig().youAreAlreadyInAnArena.replaceAll("<arena>", temp.getInternalName()));
 					}
 				}
 			} else {
-				sender.sendMessage(pli.getMessagesConfig().arena_invalid.replaceAll("<arena>", args[1]));
+				sender.sendMessage(pli.getMessagesConfig().arenaInvalid.replaceAll("<arena>", args[1]));
 			}
 		}
 		return true;
@@ -755,8 +756,8 @@ public class CommandHandler {
 					return true;
 			}
 			if (!plugin.getConfig().getBoolean("config.allow_classes_selection_out_of_arenas")) {
-				if (pli.globalPlayers.containsKey(p.getName())) {
-					Arena a = pli.globalPlayers.get(p.getName());
+				if (pli.getGlobalPlayers().containsKey(p.getName())) {
+					Arena a = pli.getGlobalPlayers().get(p.getName());
 					if (a.getArenaState() == ArenaState.INGAME) {
 						return true;
 					}
@@ -780,7 +781,7 @@ public class CommandHandler {
 			String all = "";
 			for (AClass k : pli.getAClasses().values()) {
 				if (k.isEnabled()) {
-					if (!pli.show_classes_without_usage_permission) {
+					if (!pli.isShowClassesWithoutUsagePermission()) {
 						if (!pli.getClassesHandler().kitPlayerHasPermission(k.getInternalName(), p)) {
 							continue;
 						}
@@ -799,7 +800,7 @@ public class CommandHandler {
 			if (!plugin.getConfig().getBoolean("config.classes_enabled")) {
 				return true;
 			}
-			if (pli.globalPlayers.containsKey(p.getName())) {
+			if (pli.getGlobalPlayers().containsKey(p.getName())) {
 				pli.getClassesHandler().openGUI(p.getName());
 			} else {
 				sender.sendMessage(pli.getMessagesConfig().not_in_arena);
@@ -813,7 +814,7 @@ public class CommandHandler {
 			if (!plugin.getConfig().getBoolean("config.shop_enabled")) {
 				return true;
 			}
-			if (pli.globalPlayers.containsKey(p.getName())) {
+			if (pli.getGlobalPlayers().containsKey(p.getName())) {
 				String shop_item = args[1];
 				if (!pli.getShopHandler().buyByInternalName(p, shop_item)) {
 					String all = "";
@@ -833,7 +834,7 @@ public class CommandHandler {
 			if (!plugin.getConfig().getBoolean("config.shop_enabled")) {
 				return true;
 			}
-			if (pli.globalPlayers.containsKey(p.getName())) {
+			if (pli.getGlobalPlayers().containsKey(p.getName())) {
 				pli.getShopHandler().openGUI(p.getName());
 			} else {
 				sender.sendMessage(pli.getMessagesConfig().not_in_arena);
@@ -915,7 +916,7 @@ public class CommandHandler {
 	// Hologram commands
 	public boolean setHologram(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		Location l = p.getLocation();
@@ -926,7 +927,7 @@ public class CommandHandler {
 
 	public boolean listHolograms(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		HologramsConfig config = pli.getHologramsConfig();
@@ -947,7 +948,7 @@ public class CommandHandler {
 
 	public boolean removeHologram(PluginInstance pli, CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (!sender.hasPermission(uber_permission + ".setup")) {
-			sender.sendMessage(pli.getMessagesConfig().no_perm);
+			sender.sendMessage(pli.getMessagesConfig().noPermission);
 			return true;
 		}
 		Location ploc = p.getLocation();
@@ -965,37 +966,37 @@ public class CommandHandler {
 	public boolean partyInvite(CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (args.length > 1) {
 			if (p.getName().equalsIgnoreCase(args[1])) {
-				p.sendMessage(MinigamesAPI.getAPI().partymessages.cannot_invite_yourself);
+				p.sendMessage(MinigamesAPI.getAPI().partymessages.cannotInviteYourself);
 				return true;
 			}
 			boolean isInParty = false;
-			for (Party party : MinigamesAPI.getAPI().global_party.values()) {
+			for (Party party : MinigamesAPI.getAPI().globalParty.values()) {
 				if (party.containsPlayer(p.getName())) {
 					isInParty = true;
 				}
 			}
 			if (!isInParty) {
 				if (!Validator.isPlayerOnline(args[1])) {
-					p.sendMessage(MinigamesAPI.getAPI().partymessages.player_not_online.replaceAll("<player>", args[1]));
+					p.sendMessage(MinigamesAPI.getAPI().partymessages.playerNotOnline.replaceAll("<player>", args[1]));
 					return true;
 				}
 				Party party = null;
-				if (!MinigamesAPI.getAPI().global_party.containsKey(p.getName())) {
+				if (!MinigamesAPI.getAPI().globalParty.containsKey(p.getName())) {
 					party = new Party(p.getName());
-					MinigamesAPI.getAPI().global_party.put(p.getName(), party);
+					MinigamesAPI.getAPI().globalParty.put(p.getName(), party);
 				} else {
-					party = MinigamesAPI.getAPI().global_party.get(p.getName());
+					party = MinigamesAPI.getAPI().globalParty.get(p.getName());
 				}
 				ArrayList<Party> parties = new ArrayList<Party>();
-				if (MinigamesAPI.getAPI().global_party_invites.containsKey(p.getName())) {
-					parties.addAll(MinigamesAPI.getAPI().global_party_invites.get(p.getName()));
+				if (MinigamesAPI.getAPI().globalPartyInvites.containsKey(p.getName())) {
+					parties.addAll(MinigamesAPI.getAPI().globalPartyInvites.get(p.getName()));
 				}
 				if (!parties.contains(party)) {
 					parties.add(party);
 				}
-				MinigamesAPI.getAPI().global_party_invites.put(args[1], parties);
-				p.sendMessage(MinigamesAPI.getAPI().partymessages.you_invited.replaceAll("<player>", args[1]));
-				Bukkit.getPlayer(args[1]).sendMessage(MinigamesAPI.getAPI().partymessages.you_were_invited.replaceAll("<player>", p.getName()));
+				MinigamesAPI.getAPI().globalPartyInvites.put(args[1], parties);
+				p.sendMessage(MinigamesAPI.getAPI().partymessages.youInvited.replaceAll("<player>", args[1]));
+				Bukkit.getPlayer(args[1]).sendMessage(MinigamesAPI.getAPI().partymessages.youWereInvited.replaceAll("<player>", p.getName()));
 			}
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <player>");
@@ -1006,17 +1007,17 @@ public class CommandHandler {
 	public boolean partyAccept(CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (args.length > 1) {
 			if (!Validator.isPlayerOnline(args[1])) {
-				p.sendMessage(MinigamesAPI.getAPI().partymessages.player_not_online.replaceAll("<player>", args[1]));
+				p.sendMessage(MinigamesAPI.getAPI().partymessages.playerNotOnline.replaceAll("<player>", args[1]));
 				return true;
 			}
-			if (!MinigamesAPI.getAPI().global_party_invites.containsKey(p.getName())) {
-				p.sendMessage(MinigamesAPI.getAPI().partymessages.not_invited_to_any_party);
+			if (!MinigamesAPI.getAPI().globalPartyInvites.containsKey(p.getName())) {
+				p.sendMessage(MinigamesAPI.getAPI().partymessages.notInvitedToAnyParty);
 				return true;
 			}
 
 			boolean isInParty = false;
 			Party party_ = null;
-			for (Party party : MinigamesAPI.getAPI().global_party.values()) {
+			for (Party party : MinigamesAPI.getAPI().globalParty.values()) {
 				if (party.containsPlayer(p.getName())) {
 					isInParty = true;
 					party_ = party;
@@ -1027,12 +1028,12 @@ public class CommandHandler {
 					party_.removePlayer(p.getName());
 				}
 			}
-			if (MinigamesAPI.getAPI().global_party.containsKey(p.getName())) {
-				MinigamesAPI.getAPI().global_party.get(p.getName()).disband();
+			if (MinigamesAPI.getAPI().globalParty.containsKey(p.getName())) {
+				MinigamesAPI.getAPI().globalParty.get(p.getName()).disband();
 			}
 
 			Party party__ = null;
-			for (Party party : MinigamesAPI.getAPI().global_party_invites.get(p.getName())) {
+			for (Party party : MinigamesAPI.getAPI().globalPartyInvites.get(p.getName())) {
 				if (party.getOwner().equalsIgnoreCase(args[1])) {
 					party__ = party;
 					break;
@@ -1040,9 +1041,9 @@ public class CommandHandler {
 			}
 			if (party__ != null) {
 				party__.addPlayer(p.getName());
-				MinigamesAPI.getAPI().global_party_invites.remove(p.getName());
+				MinigamesAPI.getAPI().globalPartyInvites.remove(p.getName());
 			} else {
-				p.sendMessage(MinigamesAPI.getAPI().partymessages.not_invited_to_players_party.replaceAll("<player>", args[1]));
+				p.sendMessage(MinigamesAPI.getAPI().partymessages.notInvitedToPlayersParty.replaceAll("<player>", args[1]));
 			}
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action + " <player>");
@@ -1053,15 +1054,15 @@ public class CommandHandler {
 	public boolean partyKick(CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (args.length > 1) {
 			if (!Validator.isPlayerOnline(args[1])) {
-				p.sendMessage(MinigamesAPI.getAPI().partymessages.player_not_online.replaceAll("<player>", args[1]));
+				p.sendMessage(MinigamesAPI.getAPI().partymessages.playerNotOnline.replaceAll("<player>", args[1]));
 				return true;
 			}
-			if (MinigamesAPI.getAPI().global_party.containsKey(p.getName())) {
-				Party party = MinigamesAPI.getAPI().global_party.get(p.getName());
+			if (MinigamesAPI.getAPI().globalParty.containsKey(p.getName())) {
+				Party party = MinigamesAPI.getAPI().globalParty.get(p.getName());
 				if (party.containsPlayer(args[1])) {
 					party.removePlayer(args[1]);
 				} else {
-					p.sendMessage(MinigamesAPI.getAPI().partymessages.player_not_in_party.replaceAll("<player>", args[1]));
+					p.sendMessage(MinigamesAPI.getAPI().partymessages.playerNotInParty.replaceAll("<player>", args[1]));
 				}
 			}
 		} else {
@@ -1073,13 +1074,13 @@ public class CommandHandler {
 	public boolean partyList(CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (args.length > 0) {
 			Party party_ = null;
-			for (Party party : MinigamesAPI.getAPI().global_party.values()) {
+			for (Party party : MinigamesAPI.getAPI().globalParty.values()) {
 				if (party.containsPlayer(p.getName())) {
 					party_ = party;
 				}
 			}
-			if (MinigamesAPI.getAPI().global_party.containsKey(p.getName())) {
-				party_ = MinigamesAPI.getAPI().global_party.get(p.getName());
+			if (MinigamesAPI.getAPI().globalParty.containsKey(p.getName())) {
+				party_ = MinigamesAPI.getAPI().globalParty.get(p.getName());
 			}
 			if (party_ != null) {
 				String ret = ChatColor.DARK_GREEN + party_.getOwner();
@@ -1096,8 +1097,8 @@ public class CommandHandler {
 
 	public boolean partyDisband(CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (args.length > 0) {
-			if (MinigamesAPI.getAPI().global_party.containsKey(p.getName())) {
-				MinigamesAPI.getAPI().global_party.get(p.getName()).disband();
+			if (MinigamesAPI.getAPI().globalParty.containsKey(p.getName())) {
+				MinigamesAPI.getAPI().globalParty.get(p.getName()).disband();
 			}
 		} else {
 			sender.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "-" + ChatColor.DARK_GRAY + "]" + ChatColor.GRAY + " Usage: " + cmd + " " + action);
@@ -1107,12 +1108,12 @@ public class CommandHandler {
 
 	public boolean partyLeave(CommandSender sender, String[] args, String uber_permission, String cmd, String action, final JavaPlugin plugin, Player p) {
 		if (args.length > 0) {
-			if (MinigamesAPI.getAPI().global_party.containsKey(p.getName())) {
-				MinigamesAPI.getAPI().global_party.get(p.getName()).disband();
+			if (MinigamesAPI.getAPI().globalParty.containsKey(p.getName())) {
+				MinigamesAPI.getAPI().globalParty.get(p.getName()).disband();
 				return true;
 			}
 			Party party_ = null;
-			for (Party party : MinigamesAPI.getAPI().global_party.values()) {
+			for (Party party : MinigamesAPI.getAPI().globalParty.values()) {
 				if (party.containsPlayer(p.getName())) {
 					party_ = party;
 				}

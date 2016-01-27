@@ -28,14 +28,14 @@ public class StatsConfig {
     }
     
     public FileConfiguration getConfig() {
-        if (statsConfig == null) {
+        if (this.statsConfig == null) {
             reloadConfig();
         }
-        return statsConfig;
+        return this.statsConfig;
     }
     
     public void saveConfig() {
-        if (statsConfig == null || statsFile == null) {
+        if (this.statsConfig == null || this.statsFile == null) {
             return;
         }
         try {
@@ -46,15 +46,15 @@ public class StatsConfig {
     }
     
     public void reloadConfig() {
-        if (statsFile == null) {
-        	statsFile = new File(plugin.getDataFolder(), "stats.yml");
+        if (this.statsFile == null) {
+        	this.statsFile = new File(plugin.getDataFolder(), "stats.yml");
         }
-        statsConfig = YamlConfiguration.loadConfiguration(statsFile);
+        this.statsConfig = YamlConfiguration.loadConfiguration(this.statsFile);
 
-        InputStream defConfigStream = plugin.getResource("stats.yml");
+        InputStream defConfigStream = this.plugin.getResource("stats.yml");
         if (defConfigStream != null) {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-            statsConfig.setDefaults(defConfig);
+            this. statsConfig.setDefaults(defConfig);
         }
     }
     
